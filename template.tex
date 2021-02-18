@@ -2,9 +2,67 @@
 
 \usepackage{bjerkingcv}
 
-\newcommand{\unit}{Life Science}
+\newcommand{\unit}{Life Science} % NAMN PÅ ENHET
+\newcommand{\unitdetail}{Process Engineering \& Project Management} % DETALJER OM PERSONENS ENHETSROLL
+\newcommand{\name}{Philip Tunbjer} % NAMN PÅ ANSTÄLLD
+\newcommand{\role}{Senior Consultant Life Science} % NAMN PÅ ANSTÄLLD
+\newcommand{\phone}{010-211 85 67} % TEL TILL ANSTÄLLD
+\newcommand{\email}{philip.tunbjer@bjerking.se} % NAMN PÅ ANSTÄLLD
+\newcommand{\employmentyear}{2015} % ÅRET/DATUMET DÅ PERSON ANSTÄLLDES
+
+\newcommand{\portrait}{img/portrait.png} % PATH TO PROFILE PICTURE
 \renewcommand{\dateseparator}{--} % ÄNDRA EJ.
 
 \begin{document}
 \thispagestyle{presentation}
+\noindent
+\begin{minipage}[t]{0.3\textwidth}
+    \strut\vspace*{-\baselineskip}\newline
+    \begin{tabular*}{1\linewidth}{p{1\linewidth}}
+        {\LARGE Curriculum vitae}\\
+        \includegraphics[width=120pt, height=120pt]{\portrait} \\
+        \textbf{\name} \\
+        \role{} \\
+        \unitdetail{} \\
+        \\
+        \textbf{Kontakt} \\
+        \phone{} \\
+        \href{mailto:\email}{\email} \\
+    \end{tabular*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.6\textwidth}
+    \strut\vspace*{-\baselineskip}\newline
+    \begin{tabular*}{1\linewidth}{p{0.7\linewidth} r}
+        {\Large Presentation} & \\
+        & \\
+        & \\
+        \textbf{Anställdes vid bjerking} & \\
+        \employmentyear & \\
+        & \\
+        & \\
+        \textbf{Tidigare anställningar}& \\
+        ÅF Industry AB & 2015 \\
+        PRC Engineering AB & 2014-2015 \\
+        Axis Communications AB & 2013 \\
+        Fagerdala World Foams AB & 2008 \\
+        Fagerdala Marine Systems AB & 2006 \\
+        & \\
+        & \\
+        \textbf{Utbildning} & \\
+        Civilingenjör i Maskinteknik & 2007-2013 \\
+        Webutveckling I & 2021 \\
+        Algoritmer och Datastrukturer & 2020 \\
+        Objektorienterad Programmering & 2020 \\
+        Beräkningsvetenskap I & 2019 \\
+        Matematik Alfa & 2006 \\
+        & \\
+        & \\
+        \textbf{Kurser}& \\
+        BAS-P \& BAS-U grundutbildning & 2019 \\
+        CE-märkning av medicintekniska produkter & 2015 \\
+        Plant 3D grundutbildning & 2014 \\
+        GMP grundutbildning & 2014 \\
+    \end{tabular*}
+\end{minipage}
 \end{document}
