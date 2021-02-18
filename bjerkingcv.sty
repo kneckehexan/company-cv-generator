@@ -9,7 +9,13 @@
 \usepackage{xcolor}
 % Tabeller
 \usepackage{longtable}
+\setlength\LTleft{0pt} % LONGTABLE sträcker sig över hela text-bredden
+\setlength\LTright{0pt} % LONGTABLE sträcker sig över hela text-bredden
+\usepackage{booktabs}
+\usepackage{array}
 \usepackage{multicol}
+\newcommand{\mc}[1]{\multicolumn{1}{r}{#1}}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}p{0.1\textwidth}}
 % Länkar på sida (inkl. dokumentinterna länkar)
 \usepackage[
 	pdfborder={0 0 0},
@@ -103,3 +109,8 @@
 	\rfoot{}
 	\lfoot{}
 }
+
+% Ta bort 'indent' från punktlistor samt radavståndet
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*,topsep=0pt}
+\setlist{nosep}

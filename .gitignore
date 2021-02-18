@@ -5,3 +5,4 @@
 *.out
 *.fdb*
 *.gz
+*.listing
