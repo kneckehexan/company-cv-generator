@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, Markup
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, Markup, url_for
 from flaskext.mysql import MySQL
 from flask_session import Session
 import jinja2
 import os
 import sys
-from tempfile import mkdtemp
+import tempfile
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+
+from subprocess import Popen
+import shutil
 
 # Configure application
 app = Flask(__name__, template_folder="../www/templates/")
@@ -17,6 +21,13 @@ app = Flask(__name__, template_folder="../www/templates/")
 app.config["SECRET_KEY"] = "helpfulhat@4dollarCREAM"
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+# For File uploads
+UPLOAD_FOLDER = '../www/tex/img/'
+ALLOWED_EXTENSIONS = {'png'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def allowed_file(filename):
+    return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #set up mysql config
 app.config['MYSQL_HOST'] = 'localhost'
@@ -63,7 +74,7 @@ def after_request(response):
 
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_FILE_DIR"] = tempfile.mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -107,11 +118,22 @@ latex_jinja_env = jinja2.Environment(
 latex_jinja_env.filters['escape_tex'] = escape_tex
 texTemplate = latex_jinja_env.get_template('template.tex')
 
-def writeTex(rendered_tex):
-    tmp_dir = mkdtemp()
+def writeTex(rendered_tex, out_pdf_path):
+#    tmp_dir = url_for('static', filename = 'tex/')
+#    tmp_dir = 'appDock/www/tex/'
+    tmp_dir = tempfile.mkdtemp()
     in_tmp_path = os.path.join(tmp_dir, 'rendered.tex')
-    with open('/appDock/rendered.tex', 'w') as outfile:
+    with open(in_tmp_path, 'w') as outfile:
         outfile.write(rendered_tex)
+    p = Popen(['pdflatex', in_tmp_path, '-job-name', 'out', '-output-directory', tmp_dir])
+    out_tmp_path = os.path.join(tmp_dir, 'rendered.pdf')
+    print(out_tmp_path, file=sys.stderr)
+    print(out_tmp_path, file=sys.stdout)
+    print(out_pdf_path, file=sys.stderr)
+    print(out_pdf_path, file=sys.stdout)
+    p.communicate()
+    shutil.copy(out_tmp_path, out_pdf_path)
+    shutil.rmtree(tmp_dir)
 
 
 @app.route("/")
@@ -134,8 +156,16 @@ def addtoCV():
         msg['phone'] = data['phone']
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
-        if 'img' in data:
-            msg['img'] = data['img']
+        portraitFilePath = ''
+        if 'file' in request.files:
+            file = request.files['img']
+            if file.filename == '':
+                flash('Ingen fil vald')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(portraitFilePath)
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -172,10 +202,14 @@ def addtoCV():
 #        message = Markup("Uppdraget / projektet <b>%s</b> tillagd"
 #                % (name))
 #        flash(message, "alert-success")
-        cv = texTemplate.render(msg = msg)
-        print(cv, file=sys.stderr)
-        print(cv, file=sys.stdout)
-        writeTex(cv)
+        tmp_dir = 'appDock/www/tex/img/'
+#        tmp_dir = url_for('static', filename = '/templates/tex/img/')
+        staticImg =  [os.path.join(tmp_dir, 'banner.png'),  \
+                os.path.join(tmp_dir, 'logo.png')]
+        cv = texTemplate.render(msg = msg, portrait = portraitFilePath, staticImg = staticImg)
+#        print(cv, file=sys.stderr)
+#        print(cv, file=sys.stdout)
+        writeTex(cv, os.path.join('appDock/www/pdf/', 'rendered.pdf'))
         return redirect("/")
 
 

@@ -1,5 +1,19 @@
 FROM python:3.7-alpine
 MAINTAINER Philip Tunbjer "philip.tunbjer@bjerking.se"
+
+# Setting up TeXLive - minimal installation
+COPY texlive-profile.txt /tmp/
+RUN apk add --no-cache wget perl xz && \
+    wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
+    tar -xzf install-tl-unx.tar.gz && \
+    install-tl-20*/install-tl --profile=/tmp/texlive-profile.txt && \
+    rm -rf install-tl*
+ENV PATH=/usr/local/texlive/bin/x86_64-linuxmusl:$PATH
+RUN tlmgr update --self
+COPY packages.txt /tmp/packages.txt
+RUN tlmgr install $(cat /tmp/packages.txt)
+
+# Set up Flask
 RUN mkdir appDock/
 COPY ./requirements.txt /appDock/requirements.txt
 WORKDIR ./appDock
