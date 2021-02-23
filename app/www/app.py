@@ -126,7 +126,7 @@ def writeTex(rendered_tex, out_pdf_path):
     with open(in_tmp_path, 'w') as outfile:
         outfile.write(rendered_tex)
     p = Popen(['pdflatex', in_tmp_path, '-job-name', 'out', '-output-directory', tmp_dir])
-    out_tmp_path = os.path.join(tmp_dir, 'rendered.pdf')
+    out_tmp_path = os.path.join(tmp_dir, 'out.pdf')
     print(out_tmp_path, file=sys.stderr)
     print(out_tmp_path, file=sys.stdout)
     print(out_pdf_path, file=sys.stderr)
