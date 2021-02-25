@@ -22,7 +22,8 @@ app.config["SECRET_KEY"] = "helpfulhat@4dollarCREAM"
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 # For File uploads
-UPLOAD_FOLDER = '../www/tex/img/'
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+UPLOAD_FOLDER = 'appDock/www/tex/img/'
 ALLOWED_EXTENSIONS = {'png'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
@@ -119,21 +120,14 @@ latex_jinja_env.filters['escape_tex'] = escape_tex
 texTemplate = latex_jinja_env.get_template('template.tex')
 
 def writeTex(rendered_tex, out_pdf_path):
-#    tmp_dir = url_for('static', filename = 'tex/')
-#    tmp_dir = 'appDock/www/tex/'
-    tmp_dir = tempfile.mkdtemp()
-    in_tmp_path = os.path.join(tmp_dir, 'rendered.tex')
-    with open(in_tmp_path, 'w') as outfile:
+    out_dir = 'appDock/www/tex/'
+    cur_dir = os.getcwd()
+    os.chdir(out_dir)
+    with open('rendered.tex', 'w') as outfile:
         outfile.write(rendered_tex)
-    p = Popen(['pdflatex', in_tmp_path, '-job-name', 'out', '-output-directory="./"'])
-    out_tmp_path = os.path.join(tmp_dir, 'rendered.pdf')
-    print(out_tmp_path, file=sys.stderr)
-    print(out_tmp_path, file=sys.stdout)
-    print(out_pdf_path, file=sys.stderr)
-    print(out_pdf_path, file=sys.stdout)
+    p = Popen(['latexmk', '-pdf', '-recorder', 'rendered'])
     p.communicate()
-    shutil.copy(out_tmp_path, out_pdf_path)
-    shutil.rmtree(tmp_dir)
+    os.chdir(cur_dir)
 
 
 @app.route("/")
@@ -142,7 +136,7 @@ def index():
     with app.app_context():
         return render_template("index.html")
 
-@app.route("/addtocv", methods=["POST"])
+@app.route("/addtocv", methods=["GET", "POST"])
 def addtoCV():
     """ Add assignment to DB """
     with app.app_context():
@@ -156,16 +150,17 @@ def addtoCV():
         msg['phone'] = data['phone']
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
-        portraitFilePath = ''
-        if 'file' in request.files:
-            file = request.files['img']
-            if file.filename == '':
-                flash('Ingen fil vald')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(portraitFilePath)
+        if 'img' not in request.files:
+            flash('Ingen bildfil vald')
+            return redirect(request.url)
+        file = request.files['img']
+        if file.filename == '':
+            flash('Ingen bildfil vald')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename).replace("_","")
+            portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(portraitFilePath)
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -206,7 +201,7 @@ def addtoCV():
 #        tmp_dir = url_for('static', filename = '/templates/tex/img/')
         staticImg =  [os.path.join(tmp_dir, 'banner.png'),  \
                 os.path.join(tmp_dir, 'logo.png')]
-        cv = texTemplate.render(msg = msg, portrait = portraitFilePath, staticImg = staticImg)
+        cv = texTemplate.render(msg = msg, portrait = 'img/' + filename)
 #        print(cv, file=sys.stderr)
 #        print(cv, file=sys.stdout)
         writeTex(cv, os.path.join('appDock/www/pdf/', 'rendered.pdf'))
