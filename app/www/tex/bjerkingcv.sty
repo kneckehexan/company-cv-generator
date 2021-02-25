@@ -93,25 +93,6 @@
     \cfoot{}
 }
 
-% Fixar header och footer på försättsbladet
-\definecolor{bjePurp}{RGB}{158, 0, 126}
-\fancypagestyle{titlepage}{
-	\renewcommand{\headrulewidth}{0pt}
-	\fancyhf{}
-	\chead{}
-	\rhead{\LARGE{\sffamily \textcolor{white}\projNumber}\\ \mbox{}}
-	\lhead{
-		\textcolor{bjePurp}{\rule[-2pt]{\textwidth}{55pt}}
-		\hspace{-\textwidth}
-		{\includegraphics[width=0.2\textwidth]{bjerkingWhiteT.png}}
-	}
-	\renewcommand{\footrulewidth}{2pt}
-	\renewcommand{\footrule}{\hbox to\headwidth{\color{bjePurp}\leaders\hrule height \footrulewidth\hfill}}
-	\cfoot{{\footnotesize \textbf{Bjerking AB} Strandbodgatan 1, Uppsala. Hornsgatan 174, Stockholm. Växel 010-211 80 00. bjerking.se}}
-	\rfoot{}
-	\lfoot{}
-}
-
 % Ta bort 'indent' från punktlistor samt radavståndet
 \usepackage{enumitem}
 \setlist[itemize]{leftmargin=*,topsep=0pt}
