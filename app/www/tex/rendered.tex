@@ -1,0 +1,68 @@
+\documentclass[a4paper, 10pt]{article}
+
+\usepackage{bjerkingcv}
+
+\newcommand{\unit}{Life Science} % NAMN PÅ ENHET
+\newcommand{\unitdetail}{Process och projektledning} % DETALJER OM PERSONENS ENHETSROLL
+\newcommand{\name}{Philip Tunbjer} % NAMN PÅ ANSTÄLLD
+\newcommand{\role}{Senior Konsult} % NAMN PÅ ANSTÄLLD
+\newcommand{\phone}{0736511972} % TEL TILL ANSTÄLLD
+\newcommand{\email}{philip.tunbjer@gmail.com} % NAMN PÅ ANSTÄLLD
+\newcommand{\employmentyear}{2021-02-04} % ÅRET/DATUMET DÅ PERSON ANSTÄLLDES
+\newcommand{\presentation}{ test } % PRESENTATIONSTEXT
+\newcommand{\portrait}{ img/default.png } % PORTRÄTTBILD (.PNG)
+
+\renewcommand{\dateseparator}{--} % ÄNDRA EJ.
+
+\begin{document}
+\thispagestyle{presentation}
+\pagestyle{plain}
+\noindent
+\begin{minipage}[t]{0.3\textwidth}
+    \strut\vspace*{-\baselineskip}\newline
+    \begin{tabular*}{1\linewidth}{p{1\linewidth}}
+        {\LARGE Curriculum vitae}\\
+        \includegraphics[width=120pt, height=120pt]{\portrait} \\
+        \textbf{\name} \\
+        \role{} \\
+        \unitdetail{} \\
+        \\
+        \textbf{Kontakt} \\
+        \phone{} \\
+        \href{mailto:\email}{\email} \\
+    \end{tabular*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.6\textwidth}
+    \strut\vspace*{-\baselineskip}\newline
+    \begin{tabular*}{1\linewidth}{p{0.7\linewidth} r}
+        {\Large Presentation} & \\
+        \mc{2}{\presentation{}} \\
+        \textbf{Anställdes vid bjerking} & \\
+        \employmentyear & \\
+        & \\
+        \textbf{Tidigare anställningar}& \\
+        
+        & \\
+        \textbf{Utbildning} & \\
+        
+        & \\
+        \textbf{Kurser}& \\
+        
+    \end{tabular*}
+\end{minipage}
+\mbox{ }
+\begin{longtable}{@{\extracolsep{\fill}}p{0.2\textwidth} p{0.65\textwidth} Rp{0.1\textwidth}}
+    {\large Referensobjekt} & {\large Omfattning} & {\large Tid} \\
+    \toprule
+    \endfirsthead
+
+    {\large Referensobjekt} & {\large Omfattning} & {\large Tid} \\
+    \toprule
+    \endhead
+
+    \bottomrule
+    \endlastfoot
+    
+\end{longtable}
+\end{document}

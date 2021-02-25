@@ -1,6 +1,9 @@
 $(document).ready(function() {
   console.log('Document ready');
 
+  // localStorage to save user entries.
+  const MYSTORE = window.localStorage;
+
   // Counters to keep track of the number of textareas in the various categories.
   var counters = {
     edu:0,
@@ -17,17 +20,17 @@ $(document).ready(function() {
   $('#addcou').on('click', {par1:'cou', par2:counters.cou}, insertTextarea);
   $('#addass').on('click', {par1:'ass', par2:counters.ass}, insertTextarea);
   
-  /*
   $('#form').on('submit', function(e) {
     e.preventDefault();
     let form = $('#form')[0];
     let formData = new FormData(form);
+    storeEntries(MYSTORE, formData);
     console.log('\nData to be sent: ');
-    for (var pair of formData.entries()) {
-      console.log('Label: ' + pair[0] + 'Values: ' + pair[1]);
-    }
+//    for (var pair of formData.entries()) {
+//      console.log('Label: ' + pair[0] + 'Values: ' + pair[1]);
+//    }
+    this.submit();
   });
-  */
 });
 
 /*
@@ -58,8 +61,39 @@ function insertTextarea(e) {
 }
 
 /*
- * Function to remove the textarea incase it is unsued.
+ * Function to remove the textarea incase it is unused.
  */
 function deleteTextarea(areadiv) {
   $('#' + areadiv).remove();
+}
+
+/*
+ * Function to save entries in localStorage
+ */
+function storeEntries(ls, fd) {
+  var object = {}
+  fd.forEach((value, key) => {
+    if (!Reflect.has(object, key)) {
+      object[key] = value;
+      return;
+    }
+    if (!Array.isArray(object[key])) {
+      object[key] = [object[key]];
+    }
+    object[key].push(value);
+  });
+  $.each(object, (key,val) => {
+    ls.setItem(key, JSON.stringify(val))
+  });
+}
+
+/*
+ * Function to read any stored items and populate form
+ */
+function getEntries(ls){
+  // Make sure ls isn't empty
+  if (window.localStorage.length == 0) {
+    return;
+  }
+  
 }

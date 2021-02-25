@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 
-import jinja2
-import os
-import sys
-import tempfile
-import shutil
-import re
+import jinja2, os, sys, tempfile, shutil, re
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, g, Markup, url_for
 from flaskext.mysql import MySQL
 from flask_session import Session
@@ -15,11 +10,12 @@ from werkzeug.utils import secure_filename
 from subprocess import Popen
 
 
-app = Flask(__name__, template_folder="../www/templates/")
+app = Flask(__name__)
 
 
 """ Constants """
-UPLOAD_FOLDER = 'appDock/www/tex/img/' # Where images are uploaded
+OUT_DIR = 'appDock/www/tex/' # Where PDF is placed
+UPLOAD_FOLDER = OUT_DIR + 'img/' # Where images are uploaded
 ALLOWED_EXTENSIONS = {'png'} # Add image extensions
 # Escaping tex syntax
 LATEX_SUBS = (
@@ -43,6 +39,16 @@ LATEX_JINJA_ENV = jinja2.Environment(
     loader = TEMPLATELOADER,
     autoescape = True
 )
+
+
+def escape_tex(value):
+    """ Make sure tex syntax is escaped """
+    newval = value
+    for pattern, replacement in LATEX_SUBS:
+        newval = pattern.sub(replacement, newval)
+    return newval
+
+
 LATEX_JINJA_ENV.filters['escape_tex'] = escape_tex
 TEXTEMPLATE = LATEX_JINJA_ENV.get_template('template.tex')
 
@@ -109,23 +115,16 @@ def after_request(response):
     return response
 
 
-def escape_tex(value):
-    """ Make sure tex syntax is escaped """
-    newval = value
-    for pattern, replacement in LATEX_SUBS:
-        newval = pattern.sub(replacement, newval)
-    return newval
-
-
-def writeTex(rendered_tex, out_pdf_path):
+def writeTex(rendered_tex, out_dir):
     """ Render .tex and compile with latexmk """
-    out_dir = 'appDock/www/tex/'
     cur_dir = os.getcwd()
     os.chdir(out_dir)
     with open('rendered.tex', 'w') as outfile:
         outfile.write(rendered_tex)
-    p = Popen(['latexmk', '-pdf', '-recorder', 'rendered'])
+    p = Popen(['latexmk', '-pdf', '-recorder', 'rendered.tex'])
     p.communicate()
+    q = Popen(['latexmk', '-c', 'rendered.tex'])
+    q.communicate()
     os.chdir(cur_dir)
 
 
@@ -149,17 +148,18 @@ def addtoCV():
         msg['phone'] = data['phone']
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
-        if 'img' not in request.files:
+        if 'img' in request.files:
+            file = request.files['img']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename).replace("_","")
+                portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(portraitFilePath)
+            if file.filename == '':
+                filename = 'default.png'
+                flash('Ingen bildfil vald, använder "default"')
+        else:
+            filename = 'default.png'
             flash('Ingen bildfil vald')
-            return redirect(request.url)
-        file = request.files['img']
-        if file.filename == '':
-            flash('Ingen bildfil vald')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename).replace("_","")
-            portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(portraitFilePath)
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -172,7 +172,7 @@ def addtoCV():
             msg['assignments'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
         cv = TEXTEMPLATE.render(msg = data, portrait = 'img/' + filename)
-        writeTex(cv, os.path.join('appDock/www/pdf/', 'rendered.pdf'))
+        writeTex(cv, OUT_DIR)
         return redirect("/")
 
 
