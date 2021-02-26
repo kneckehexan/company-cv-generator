@@ -5,7 +5,7 @@ services:
         ports:
             - '5000:5000'
         volumes:
-            - .:/appDock
+            - ./app:/appDock
         environment:
             FLASK_ENV: development
         container_name: bjeCV

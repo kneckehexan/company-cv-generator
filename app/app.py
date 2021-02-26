@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 """ Constants """
 ACCESS_RIGHTS = 0o755
-OUT_DIR = 'appDock/www/tex/' # Where PDF is placed
+OUT_DIR = 'appDock/tex/' # Where PDF is placed
 UPLOAD_FOLDER = OUT_DIR + 'img/' # Where images are uploaded
 ALLOWED_EXTENSIONS = {'png'} # Add image extensions
 # Escaping tex syntax
