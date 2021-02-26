@@ -42,7 +42,7 @@
         \employmentyear & \\
         & \\
         \textbf{Tidigare anställningar}& \\
-        ((* for row in msg['employment'] *))
+        ((* for row in msg['emp'] *))
         (((row['title']))) & (((row['time']))) \\
         ((* endfor *))
         & \\
@@ -52,7 +52,7 @@
         ((* endfor *))
         & \\
         \textbf{Kurser}& \\
-        ((* for row in msg['courses'] *))
+        ((* for row in msg['cou'] *))
         (((row['title']))) & (((row['time']))) \\
         ((* endfor *))
     \end{tabular*}
@@ -69,7 +69,7 @@
 
     \bottomrule
     \endlastfoot
-    ((*for row in msg['assignments'] *))
+    ((*for row in msg['ass'] *))
     (((row['title']))) & (((row['descr']))) & (((row['time']))) \\
     ((* endfor *))
 \end{longtable}

@@ -4,6 +4,8 @@ $(document).ready(function() {
   // localStorage to save user entries.
   const MYSTORE = window.localStorage;
 
+  getEntries(MYSTORE);
+
   // Counters to keep track of the number of textareas in the various categories.
   var counters = {
     edu:0,
@@ -24,11 +26,8 @@ $(document).ready(function() {
     e.preventDefault();
     let form = $('#form')[0];
     let formData = new FormData(form);
-    storeEntries(MYSTORE, formData);
     console.log('\nData to be sent: ');
-//    for (var pair of formData.entries()) {
-//      console.log('Label: ' + pair[0] + 'Values: ' + pair[1]);
-//    }
+    storeEntries(MYSTORE, formData);
     this.submit();
   });
 });
@@ -36,7 +35,7 @@ $(document).ready(function() {
 /*
  * Function to add a textarea for a particular category. Also adds delete button.
  */
-function insertTextarea(e) {
+function insertTextarea(e, title='', time='', descr='') {
   e.preventDefault();
   // div
   $('#' + e.data.par1).append('<div id="div' + e.data.par1 + e.data.par2 + '">');
@@ -45,16 +44,19 @@ function insertTextarea(e) {
   // title
   $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-title">Titel: </label>');
   $('#div' + e.data.par1 + e.data.par2).append('<input type="text" id="' + e.data.par1 + e.data.par2 + '-title" name="'+ e.data.par1 + '-title" required>');
+  $('#' + e.data.par1 + e.data.par2 + '-title').val(title);
 
   // description
   if (e.data.par1 == 'ass'){
     $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-descr">Beskrivning: </label>');
     $('#div' + e.data.par1 + e.data.par2).append('<textarea id="' + e.data.par1 + e.data.par2 + '-descr" name="'+ e.data.par1 + '-descr" rows="5" cols="40">');
+    $('#' + e.data.par1 + e.data.par2 + '-descr').val(descr);
   }
 
   // time
   $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-time">År: </label>');
   $('#div' + e.data.par1 + e.data.par2).append('<input type="text" id="' + e.data.par1 + e.data.par2 + '-time" name="'+ e.data.par1 + '-time" rows="1" cols="10" pattern="^\\d{4}$" placeholder="yyyy">');
+  $('#' + e.data.par1 + e.data.par2 + '-time').val(time);
 
   $('#div' + e.data.par1 + e.data.par2).append('<button onclick="deleteTextarea(\'div' + e.data.par1 + e.data.par2 + '\');" id="del' + e.data.par1 + e.data.par2 + '">Ta bort</button>');
   e.data.par2++;
@@ -68,7 +70,8 @@ function deleteTextarea(areadiv) {
 }
 
 /*
- * Function to save entries in localStorage
+ * Function to save entries in localStorage and show user
+ * what is being sent, in console
  */
 function storeEntries(ls, fd) {
   var object = {}
@@ -85,6 +88,7 @@ function storeEntries(ls, fd) {
   $.each(object, (key,val) => {
     ls.setItem(key, JSON.stringify(val))
   });
+  console.log(JSON.stringify(object));
 }
 
 /*
@@ -95,5 +99,65 @@ function getEntries(ls){
   if (window.localStorage.length == 0) {
     return;
   }
-  
+
+  // Single values populate form directly.
+  // Multiple values are extracted into a more complex structure
+  var tmp_obj = {};
+  var arr = [];
+  Object.keys(ls).forEach(function(k) {
+    if (/^(?!\w{3}-).*/.test(k)) {
+      $('#' + k).val(JSON.parse(ls.getItem(k)));
+    } else {
+      arr.push(JSON.parse(ls.getItem(k)))
+      t = k.split(/-\w+$/)[0];
+      tmp_obj[t] = {...arr};
+    }
+  });
+  console.log(tmp_obj);
+
+
 }
+
+
+
+//      var arr = JSON.parse(ls.getItem(k));
+//      let tmp_sub_obj = {}
+////      tmp_sub_obj[k.split(/-\w+$/)] = [arr]
+//      tmp_sub_obj[k] = [arr]
+//      tmp_arr.push(tmp_sub_obj);
+//  var tmp_obj = {
+//    'edu-title': [],
+//    'edu-time': [],
+//    'emp-title': [],
+//    'emp-time': [],
+//    'cou-title': [],
+//    'cou-time': [],
+//    'ass-title': [],
+//    'ass-time': [],
+//    'ass-decr': []
+//  };
+
+  // Transform data into a more comprehensible Object.
+
+//  var tmp_obj = {};
+//  for (let i = 0; i < tmp_arr.length; i++) {
+//    Object.keys(tmp_arr[i]).forEach(function(k) {
+//      tmp_obj[k] = tmp_arr[i][k];
+//    });
+//  }
+
+//  for (let key, val in tmp_obj) {
+//    
+//  }
+
+//  pasteStorageValues(tmp_obj);
+
+function zip(arrays) {
+  return arrays[0].map(function(_,i){
+    return arrays.map(function(array){return array[i]})
+  });
+}
+//function pasteStorageValues(obj, section){
+//  $.each(obj, function(index, value, section) {
+//    insertTextarea({par1:section, par2:counters.section}, value
+//}

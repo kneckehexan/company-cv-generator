@@ -14,6 +14,7 @@ app = Flask(__name__)
 
 
 """ Constants """
+ACCESS_RIGHTS = 0o755
 OUT_DIR = 'appDock/www/tex/' # Where PDF is placed
 UPLOAD_FOLDER = OUT_DIR + 'img/' # Where images are uploaded
 ALLOWED_EXTENSIONS = {'png'} # Add image extensions
@@ -128,6 +129,17 @@ def writeTex(rendered_tex, out_dir):
     os.chdir(cur_dir)
 
 
+def servePdf(pdf_path):
+    """ Send file to user """
+
+
+def deleteGenFiles(tex):
+    """ Delete generated files """
+    if (tex != 'default'):
+        os.remove(UPLOAD_FOLDER + tex) # Uploaded image
+    os.remove(OUT_DIR + 'render.tex') # Rendered TEX
+    os.remove(OUT_DIR + 'rendered.pdf') # Rendered PDF
+
 @app.route("/")
 def index():
     """ Open index page and show current assignments """
@@ -165,13 +177,13 @@ def addtoCV():
         if 'edu-title' in data:
             msg['edu'] =  [{'title': i, 'time': j} for i, j in zip(request.form.getlist('edu-title'), request.form.getlist('edu-time'))]
         if 'emp-title' in data:
-            msg['employment'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('emp-title'), request.form.getlist('emp-time'))]
+            msg['emp'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('emp-title'), request.form.getlist('emp-time'))]
         if 'cou-title' in data:
-            msg['courses'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('cou-title'), request.form.getlist('cou-time'))]
+            msg['cou'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('cou-title'), request.form.getlist('cou-time'))]
         if 'ass-title' in data:
-            msg['assignments'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
+            msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
-        cv = TEXTEMPLATE.render(msg = data, portrait = 'img/' + filename)
+        cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
         writeTex(cv, OUT_DIR)
         return redirect("/")
 

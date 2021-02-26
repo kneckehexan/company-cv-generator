@@ -6,7 +6,7 @@
 *.fdb*
 *.gz
 *.listing
-www/tex/rendered*
-!www/tex/img/logo*
-!www/tex/img/banner*
-!www/tex/img/default*
+rendered.tex
+!app/www/tex/img/logo.png
+!app/www/tex/img/banner.png
+!app/www/tex/img/default.png
