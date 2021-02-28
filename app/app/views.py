@@ -1,5 +1,24 @@
 from app import app
 from flask import render_template, request, redirect, flash, url_for
+from app.helpers import allowed_file, writeTex
+from werkzeug.utils import secure_filename
+
+import os, re, jinja2
+
+
+# Set jinja2 environment in latex syntax so that it doesn't conflict with .tex
+PATH = os.path.join(os.path.dirname(__file__),'./tex')
+TEMPLATELOADER = jinja2.FileSystemLoader(searchpath=PATH)
+LATEX_JINJA_ENV = jinja2.Environment(
+    block_start_string = '((*',
+    block_end_string = '*))',
+    variable_start_string = '(((',
+    variable_end_string = ')))',
+    comment_start_string = '((=',
+    comment_end_string = '=))',
+    loader = TEMPLATELOADER,
+    autoescape = True
+)
 
 
 @app.route("/")
@@ -10,6 +29,24 @@ def index():
 
 
 @app.template_filter("escape_tex")
+def escape_tex(value):
+    """ Make sure tex syntax is escaped """
+    LATEX_SUBS = (
+        (re.compile(r"\\"), r"\\textbackslash"),
+        (re.compile(r"([{}_#%&$])"), r"\\\1"),
+        (re.compile(r"~"), r"\~{}"),
+        (re.compile(r"\^"), r"\^{}"),
+        (re.compile(r'"'), r"''"),
+        (re.compile(r"\.\.\.+"), r"\\ldots"),
+    )
+    newval = value
+    for pattern, replacement in LATEX_SUBS:
+        newval = pattern.sub(replacement, newval)
+    return newval
+
+
+LATEX_JINJA_ENV.filters['escape_tex'] = escape_tex
+TEXTEMPLATE = LATEX_JINJA_ENV.get_template('template.tex')
 
 
 @app.route("/createpdf", methods=["GET", "POST"])
@@ -30,7 +67,7 @@ def createpdf():
             file = request.files['img']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename).replace("_","")
-                portraitFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                portraitFilePath = os.path.join(app.config['IMAGE_UPLOADS'], filename)
                 file.save(portraitFilePath)
             if file.filename == '':
                 filename = 'default.png'
@@ -49,7 +86,7 @@ def createpdf():
         if 'ass-title' in data:
             msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
-        cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
-        writeTex(cv, OUT_DIR)
+        cv = TEXTEMPLATE.render(msg = msg, portrait = app.config["IMAGE_UPLOADS"] + filename)
+        writeTex(cv, app.config["OUT_DIR"])
         return redirect("public/index.html")
 

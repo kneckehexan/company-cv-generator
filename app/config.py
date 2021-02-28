@@ -7,7 +7,11 @@ class Config(object):
     DB_USERNAME = "admin"
     DB_PASSWORD = "example"
 
+    IMAGE_UPLOADS = "app/app/uploads"
     OUT_DIR = "app/app/out"
+
+    ALLOWED_EXTENSIONS = ["JPEG", "JPG", "PNG"]
+    MAX_CONTENT_LENGTH = 1024 * 1024
 
     SESSION_COOKIE_SECURE = True
 
@@ -21,8 +25,13 @@ class DevelopmentConfig(Config):
     DB_USERNAME = "admin"
     DB_PASSWORD = "example"
 
-    IMAGE_UPLOADS = "app/" ### FIXA HÄR, se tuorial
+    SESSION_COOKIE_SECURE = False
 
 class TestingConfig(Config):
     TESTING = True
 
+    DB_NAME = "development-db"
+    DB_USERNAME = "admin"
+    DB_PASSWORD = "example"
+
+    SESSION_COOKIE_SECURE = False
