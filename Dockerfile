@@ -14,14 +14,13 @@ COPY dockerreq/packages.txt /tmp/packages.txt
 RUN tlmgr install $(cat /tmp/packages.txt)
 
 # Set up Flask
-RUN mkdir appDock/
-COPY dockerreq/requirements.txt /appDock/requirements.txt
-WORKDIR ./appDock
+RUN mkdir app/
+COPY dockerreq/requirements.txt /app/requirements.txt
+WORKDIR ./app
 RUN pip install -r requirements.txt
 WORKDIR ../
-COPY . ./appDock
-ENV FLASK_APP=app.py
+COPY . ./app
+ENV FLASK_APP=run.py
 #ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_ENV=development
 EXPOSE 5000
-CMD ["python", "appDock/app.py"]
+CMD ["python", "app/run.py"]

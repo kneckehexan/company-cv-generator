@@ -1,11 +1,11 @@
 {% extends "public/templates/public_layout.html" %}
 
 {% block header %}
-<script src="{{ url_for('static', filename='scripts/form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>
 {% endblock %}
 
 {% block main %}
-<form id="form" action="/addtocv" method="post" enctype="multipart/form-data">
+<form id="form" action="/createpdf" method="post" enctype="multipart/form-data">
   <fieldset>
     <legend>Övergripande detaljer</legend>
     <label for="name">Namn:</label>

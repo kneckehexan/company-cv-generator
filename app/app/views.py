@@ -1,13 +1,14 @@
 from app import app
-from flask import render_template, request, redirect, flash, url_for
+from flask import render_template, request, redirect, flash, url_for, Markup, g
 from app.helpers import allowed_file, writeTex
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
-import os, re, jinja2
+import os, re, jinja2, sys
 
 
 # Set jinja2 environment in latex syntax so that it doesn't conflict with .tex
-PATH = os.path.join(os.path.dirname(__file__),'./tex')
+PATH = os.path.join(os.path.dirname(__file__),'./templates/tex')
 TEMPLATELOADER = jinja2.FileSystemLoader(searchpath=PATH)
 LATEX_JINJA_ENV = jinja2.Environment(
     block_start_string = '((*',
@@ -49,13 +50,18 @@ LATEX_JINJA_ENV.filters['escape_tex'] = escape_tex
 TEXTEMPLATE = LATEX_JINJA_ENV.get_template('template.tex')
 
 
-@app.route("/createpdf", methods=["GET", "POST"])
+@app.route("/createpdf", methods=["POST"])
 def createpdf():
     """ Add assignment to DB """
     with app.app_context():
         # Get form data
-        data = request.form
+        if request.form:
+            data = request.form
+        else:
+            return 'no form'
         msg = {}
+        print(data['name'], file=sys.stderr)
+        print(data['name'], file=sys.stdout)
         msg['name'] = data['name']
         msg['role'] = data['role']
         msg['unit'] = data['unit']
@@ -86,7 +92,17 @@ def createpdf():
         if 'ass-title' in data:
             msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
-        cv = TEXTEMPLATE.render(msg = msg, portrait = app.config["IMAGE_UPLOADS"] + filename)
-        writeTex(cv, app.config["OUT_DIR"])
-        return redirect("public/index.html")
+        cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
+        print(cv, file=sys.stderr)
+        print(cv, file=sys.stdout)
+        writeTex(cv, app.config["OUT_DIR"], filename)
+        return render_template('public/index.html')
 
+
+@app.after_request
+def after_request(response):
+    """ Ensure responses aren't cached """
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
