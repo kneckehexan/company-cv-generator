@@ -60,8 +60,6 @@ def createpdf():
         else:
             return 'no form'
         msg = {}
-        print(data['name'], file=sys.stderr)
-        print(data['name'], file=sys.stdout)
         msg['name'] = data['name']
         msg['role'] = data['role']
         msg['unit'] = data['unit']
@@ -93,8 +91,6 @@ def createpdf():
             msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
         cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
-        print(cv, file=sys.stderr)
-        print(cv, file=sys.stdout)
         writeTex(cv, app.config["OUT_DIR"], filename)
         return render_template('public/index.html')
 

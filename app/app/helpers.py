@@ -1,7 +1,7 @@
 from app import app
-#from subprocess import Popen
-import subprocess
+from subprocess import Popen
 from distutils.dir_util import copy_tree
+from uuid import uuid4
 
 import os, tempfile, shutil, sys
 
@@ -14,26 +14,30 @@ def allowed_file(filename):
 def writeTex(rendered_tex, out_dir, img):
     """ Render .tex and compile with latexmk """
     with tempfile.TemporaryDirectory() as td:
-        print(os.listdir(td), file=sys.stderr)
-        print(os.listdir(td), file=sys.stdout)
+        # Copy tex template files and folders to tempdir.
         copy_tree('app/app/templates/tex', td)
-        print(os.listdir(td), file=sys.stderr)
-        print(os.listdir(td), file=sys.stdout)
         shutil.copy(app.config['IMAGE_UPLOADS'] + '/' + img, td + '/img/' + img)
-        tmp_out = os.path.join(td, 'cv.pdf')
-        print(os.listdir(td), file=sys.stderr)
-        print(os.listdir(td), file=sys.stdout)
-        tmp_in = os.path.join(td, 'cv.tex')
+        # Create random UUID4 for tex and pdf files to use.
+        rndID = str(uuid4())
+        # Path to the to-be-created pdf
+        tmp_out = os.path.join(td, rndID + '.pdf')
+        # Filename of the to-be-rendered tex-file.
+        tmp_in = rndID + '.tex'
+        # Get current working dir path.
+        cur_dir = os.getcwd()
+        # Change working dir to the temporary one.
+        os.chdir(td)
+        # Render the tex-file.
         with open(tmp_in, 'w') as f:
             f.writelines(rendered_tex)
-        print(os.listdir(td), file=sys.stderr)
-        print(os.listdir(td), file=sys.stdout)
-        print(os.listdir(td+'/img'), file=sys.stderr)
-        print(os.listdir(td+'/img'), file=sys.stdout)
-        subprocess.call('latexmk -pdf -recorder ' + tmp_in)
-#        subprocess.run(['latexmk', '-pdf', '-recorder', tmp_in])
-#        p1.communicate()
+        # Run commands to render PDF.
+        p1 = Popen(['latexmk', '-pdf', '-recorder', tmp_in])
+        p1.communicate()
+        # Change back to original working directory.
+        os.chdir(cur_dir)
+        # Copy newly created PDF to out-put folder.
         shutil.copy2(tmp_out, out_dir)
+        # Temporary directory should now be destroyed and the files within it.
 
 
 def servePdf(pdf_path):
