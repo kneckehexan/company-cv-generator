@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect, flash, url_for, Markup, g
+from flask import render_template, request, redirect, flash, url_for, Markup, g, send_from_directory, abort
 from app.helpers import allowed_file, writeTex
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -18,7 +18,7 @@ LATEX_JINJA_ENV = jinja2.Environment(
     comment_start_string = '((=',
     comment_end_string = '=))',
     loader = TEMPLATELOADER,
-    autoescape = True
+    autoescape = False
 )
 
 
@@ -29,17 +29,18 @@ def index():
         return render_template("public/index.html")
 
 
-@app.template_filter("escape_tex")
+LATEX_SUBS = (
+    (re.compile(r"\\"), r"\\textbackslash"),
+    (re.compile(r"([{}_#%&$])"), r"\\\1"),
+    (re.compile(r"~"), r"\~{}"),
+    (re.compile(r"\^"), r"\^{}"),
+    (re.compile(r'"'), r"''"),
+    (re.compile(r"\.\.\.+"), r"\\ldots"),
+)
+
+
 def escape_tex(value):
     """ Make sure tex syntax is escaped """
-    LATEX_SUBS = (
-        (re.compile(r"\\"), r"\\textbackslash"),
-        (re.compile(r"([{}_#%&$])"), r"\\\1"),
-        (re.compile(r"~"), r"\~{}"),
-        (re.compile(r"\^"), r"\^{}"),
-        (re.compile(r'"'), r"''"),
-        (re.compile(r"\.\.\.+"), r"\\ldots"),
-    )
     newval = value
     for pattern, replacement in LATEX_SUBS:
         newval = pattern.sub(replacement, newval)
@@ -67,18 +68,17 @@ def createpdf():
         msg['phone'] = data['phone']
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
+        filename = 'default.png'
         if 'img' in request.files:
             file = request.files['img']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename).replace("_","")
                 portraitFilePath = os.path.join(app.config['IMAGE_UPLOADS'], filename)
                 file.save(portraitFilePath)
-            if file.filename == '':
-                filename = 'default.png'
+            else:
                 flash('Ingen bildfil vald, använder "default"')
         else:
-            filename = 'default.png'
-            flash('Ingen bildfil vald')
+            flash('Ingen bildfil vald, använder "default"')
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -91,8 +91,15 @@ def createpdf():
             msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
         cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
-        writeTex(cv, app.config["OUT_DIR"], filename)
-        return render_template('public/index.html')
+        pdf = writeTex(cv, app.config["OUT_DIR"], filename)
+        return redirect("/getpdf/" + pdf)
+
+
+@app.route("/getpdf/<pdfname>")
+def getpdf(pdfname):
+    filename = f'{pdfname}.pdf'
+    flash('PDF skapad och hämtad.')
+    return send_from_directory(app.config['OUT_DIR'], filename=filename, as_attachment=True)
 
 
 @app.after_request

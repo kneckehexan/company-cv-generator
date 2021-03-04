@@ -8,9 +8,9 @@ class Config(object):
     DB_PASSWORD = "example"
 
     IMAGE_UPLOADS = "app/app/uploads"
-    OUT_DIR = "app/app/out"
+    OUT_DIR = "/app/app/static/pdf"
 
-    ALLOWED_EXTENSIONS = ["JPEG", "JPG", "PNG"]
+    ALLOWED_EXTENSIONS = ["JPEG", "jpeg", "JPG", "jpg", "PNG", "png"]
     MAX_CONTENT_LENGTH = 1024 * 1024
 
     SESSION_COOKIE_SECURE = True
