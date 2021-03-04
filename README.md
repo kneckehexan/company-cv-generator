@@ -1,1 +1,2 @@
-Trying to create a web-application in which a user (for now, no database, but is a functionality I want later) can enter specific curriculum vitae information that later will result in a printable/saveable PDF. The PDF should be created using pdflatex, using a premade .tex template. Not sure how to go about populating the existing template or if a seperate one needs to be made, using perhaps Python. But I'm new to this and have never done something like it before so I'll figure it out as I go along.
+# Create PDF from HTML form using Flask
+A user inputs data in a HTML form, hits send, and a PDF os produced using a pre-defined `.tex` template. No database is used other than `localSession`.
