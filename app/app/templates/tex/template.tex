@@ -22,7 +22,7 @@
     \strut\vspace*{-\baselineskip}\newline
     \begin{tabular*}{1\linewidth}{p{1\linewidth}}
         {\LARGE Curriculum vitae}\\
-        %((* if portrait != '' *))\includegraphics[width=120pt, height=120pt]{\portrait}((* endif *)) \\
+        ((* if portrait != '' *))\includegraphics[width=120pt, height=120pt]{\portrait}((* endif *)) \\
         \textbf{\name} \\
         \role{} \\
         \unitdetail{} \\
@@ -38,20 +38,20 @@
     \begin{tabular*}{1\linewidth}{p{0.7\linewidth} r}
         {\Large Presentation} & \\
         \mc{2}{\presentation{}} \\
-        \textbf{Employed at Compnay} & \\
+        \textbf{Anställd på Bjerking} & \\
         \employmentyear & \\
         & \\
-        \textbf{Previous Employments}& \\
+        \textbf{Tidigare anställningar}& \\
         ((* for row in msg['emp'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
         & \\
-        \textbf{Education} & \\
+        \textbf{Utbildning} & \\
         ((* for row in msg['edu'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
         & \\
-        \textbf{Courses}& \\
+        \textbf{Kurser}& \\
         ((* for row in msg['cou'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
@@ -59,11 +59,11 @@
 \end{minipage}
 \mbox{ }
 \begin{longtable}{@{\extracolsep{\fill}}p{0.2\textwidth} p{0.65\textwidth} Rp{0.1\textwidth}}
-    {\large Reference Assignments} & {\large Desciption} & {\large Time} \\
+    {\large Referensobjekt} & {\large Beskrivning} & {\large Tid} \\
     \toprule
     \endfirsthead
 
-    {\large Reference Assignments} & {\large Desciption} & {\large Time} \\
+    {\large Referensobjekt} & {\large Beskrivning} & {\large Tid} \\
     \toprule
     \endhead
 
