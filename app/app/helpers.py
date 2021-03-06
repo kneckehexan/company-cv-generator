@@ -1,9 +1,9 @@
 from app import app
-from subprocess import Popen
+#from subprocess import Popen
 from distutils.dir_util import copy_tree
 from uuid import uuid4
 from flask import send_from_directory, abort, safe_join, send_file
-import os, tempfile, shutil, sys, re
+import os, tempfile, shutil, sys, re, subprocess
 
 def allowed_file(filename):
     """ Make sure uploaded files have the correct extension """
@@ -31,9 +31,15 @@ def writeTex(rendered_tex, out_dir, img):
         with open(tmp_in, 'w') as f:
             f.writelines(rendered_tex)
         # Run commands to render PDF.
-        p1 = Popen(['pdflatex', '-interaction=nonstopmode', tmp_in])
-        #p1 = Popen(['latexmk', '-pdf', '-recorder', tmp_in])
-        p1.communicate()
+        subprocess.check_call('pdflatex -interaction=nonstopmode ' + tmp_in, shell=True)
+#        p1 = Popen('latex ' + tmp_in, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#        p2 = Popen('dvips ' + rndID + '.dvi', shell=True, stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+#        p3 = Popen('ps2pdf ' + rndID + '.ps', shell=True, stdin=p2.stdout)
+#        p3.wait()
+        #subprocess.check_call('latex ' + tmp_in, shell=True)
+        #subprocess.check_call('dvips ' + rndID + '.dvi', shell=True)
+        #subprocess.check_call('ps2pdf ' + rndID + '.ps', shell=True)
+        os.listdir()
         # Change back to original working directory.
         os.chdir(cur_dir)
         # Copy newly created PDF to out-put folder.

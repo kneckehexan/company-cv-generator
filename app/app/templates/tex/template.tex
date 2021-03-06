@@ -10,7 +10,7 @@
 \newcommand{\email}{((( msg['email']|escape_tex )))} % NAMN PÅ ANSTÄLLD
 \newcommand{\employmentyear}{((( msg['employmentdate']|escape_tex )))} % ÅRET/DATUMET DÅ PERSON ANSTÄLLDES
 \newcommand{\presentation}{((* if msg['presentation'] is defined *)) ((( msg['presentation']|escape_tex ))) ((* endif *))} % PRESENTATIONSTEXT
-\newcommand{\portrait}{((* if portrait is defined *)) ((( portrait|escape_tex ))) ((* endif *))} % PORTRÄTTBILD (.PNG)
+\newcommand{\portrait}{((* if portrait is defined *))(((portrait|escape_tex)))((* endif *))} % PORTRÄTTBILD (.PNG)
 
 \renewcommand{\dateseparator}{--} % ÄNDRA EJ.
 
@@ -22,7 +22,7 @@
     \strut\vspace*{-\baselineskip}\newline
     \begin{tabular*}{1\linewidth}{p{1\linewidth}}
         {\LARGE Curriculum vitae}\\
-        ((* if portrait != '' *))\includegraphics[width=120pt, height=120pt]{\portrait}((* endif *)) \\
+        %((* if portrait != '' *))\includegraphics[width=120pt, height=120pt]{\portrait}((* endif *)) \\
         \textbf{\name} \\
         \role{} \\
         \unitdetail{} \\
@@ -38,20 +38,20 @@
     \begin{tabular*}{1\linewidth}{p{0.7\linewidth} r}
         {\Large Presentation} & \\
         \mc{2}{\presentation{}} \\
-        \textbf{Anställdes vid bjerking} & \\
+        \textbf{Employed at Compnay} & \\
         \employmentyear & \\
         & \\
-        \textbf{Tidigare anställningar}& \\
+        \textbf{Previous Employments}& \\
         ((* for row in msg['emp'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
         & \\
-        \textbf{Utbildning} & \\
+        \textbf{Education} & \\
         ((* for row in msg['edu'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
         & \\
-        \textbf{Kurser}& \\
+        \textbf{Courses}& \\
         ((* for row in msg['cou'] *))
         (((row['title']|escape_tex))) & (((row['time']|escape_tex))) \\
         ((* endfor *))
@@ -59,11 +59,11 @@
 \end{minipage}
 \mbox{ }
 \begin{longtable}{@{\extracolsep{\fill}}p{0.2\textwidth} p{0.65\textwidth} Rp{0.1\textwidth}}
-    {\large Referensobjekt} & {\large Omfattning} & {\large Tid} \\
+    {\large Reference Assignments} & {\large Desciption} & {\large Time} \\
     \toprule
     \endfirsthead
 
-    {\large Referensobjekt} & {\large Omfattning} & {\large Tid} \\
+    {\large Reference Assignments} & {\large Desciption} & {\large Time} \\
     \toprule
     \endhead
 
