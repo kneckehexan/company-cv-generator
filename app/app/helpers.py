@@ -1,5 +1,4 @@
 from app import app
-#from subprocess import Popen
 from distutils.dir_util import copy_tree
 from uuid import uuid4
 from flask import send_from_directory, abort, safe_join, send_file
@@ -32,14 +31,6 @@ def writeTex(rendered_tex, out_dir, img):
             f.writelines(rendered_tex)
         # Run commands to render PDF.
         subprocess.check_call('pdflatex -interaction=nonstopmode ' + tmp_in, shell=True)
-#        p1 = Popen('latex ' + tmp_in, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#        p2 = Popen('dvips ' + rndID + '.dvi', shell=True, stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-#        p3 = Popen('ps2pdf ' + rndID + '.ps', shell=True, stdin=p2.stdout)
-#        p3.wait()
-        #subprocess.check_call('latex ' + tmp_in, shell=True)
-        #subprocess.check_call('dvips ' + rndID + '.dvi', shell=True)
-        #subprocess.check_call('ps2pdf ' + rndID + '.ps', shell=True)
-        os.listdir()
         # Change back to original working directory.
         os.chdir(cur_dir)
         # Copy newly created PDF to out-put folder.
@@ -48,9 +39,10 @@ def writeTex(rendered_tex, out_dir, img):
         return rndID
 
 
-def deleteGenFiles(tex):
-    """ Delete generated files NOT IMPLEMENTED """
-    if (tex != 'default'):
-        os.remove(app.config["IMAGE_UPLOADS"] + tex) # Uploaded image
-    os.remove(app.config["OUT_DIR"] + 'cv.tex') # Rendered TEX
-    os.remove(app.config["OUT_DIR"] + 'cv.pdf') # Rendered PDF
+def deleteImgUpload(img):
+    """ Delete uploaded image file """
+    if (img != 'default.png'):
+        os.remove(app.config["IMAGE_UPLOADS"] + '/' + img) # Uploaded image
+
+def deletePdf(pdf):
+    os.remove(os.path.join(app.config['OUT_DIR'], pdf)) # Created PDF

@@ -1,6 +1,6 @@
 from app import app
-from flask import render_template, request, redirect, flash, url_for, Markup, g, send_from_directory, abort
-from app.helpers import allowed_file, writeTex
+from flask import render_template, request, redirect, flash, url_for, Markup, g, send_from_directory, abort, Response
+from app.helpers import allowed_file, writeTex, deleteImgUpload, deletePdf
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
@@ -92,14 +92,24 @@ def createpdf():
 
         cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
         pdf = writeTex(cv, app.config["OUT_DIR"], filename)
+        deleteImgUpload(filename)
         return redirect("/getpdf/" + pdf)
 
 
 @app.route("/getpdf/<pdfname>")
 def getpdf(pdfname):
     filename = f'{pdfname}.pdf'
-    flash('PDF skapad och hämtad.')
-    return send_from_directory(app.config['OUT_DIR'], filename=filename, as_attachment=True)
+    with open(os.path.join(app.config['OUT_DIR'], filename), 'rb') as f:
+        data = f.readlines()
+    os.remove(os.path.join(app.config['OUT_DIR'], filename))
+    return Response(data, headers={
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename=%s;' %filename
+        })
+#    flash('PDF skapad och hämtad.')
+#    filepath = os.path.join(app.instance_path, filename)
+#    return r
+#    return send_from_directory(app.config['OUT_DIR'], filename=filename, as_attachment=True)
 
 
 @app.after_request
