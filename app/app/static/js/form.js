@@ -1,3 +1,12 @@
+// Counters to keep track of the number of textareas in the various categories.
+var counters = {
+  edu:0,
+  emp:0,
+  cou:0,
+  ass:0
+};
+
+
 $(document).ready(function() {
   console.log('Document ready');
 
@@ -6,89 +15,213 @@ $(document).ready(function() {
 
   getEntries(MYSTORE);
 
-  // Counters to keep track of the number of textareas in the various categories.
-  var counters = {
-    edu:0,
-    emp:0,
-    cou:0,
-    ass:0
-  };
-
-  // To store all responses.
 
   // Add textarea
-  $('#addedu').on('click', {par1:'edu', par2:counters.edu}, insertTextarea);
-  $('#addemp').on('click', {par1:'emp', par2:counters.emp}, insertTextarea);
-  $('#addcou').on('click', {par1:'cou', par2:counters.cou}, insertTextarea);
-  $('#addass').on('click', {par1:'ass', par2:counters.ass}, insertTextarea);
+  $('#addedu').on('click', function() {
+    insertTextarea('edu', counters.edu);
+  });
+  $('#addemp').on('click', function() {
+    insertTextarea('emp', counters.emp);
+  });
+  $('#addcou').on('click', function() {
+    insertTextarea('cou', counters.cou);
+  });
+  $('#addass').on('click', function() {
+    insertTextarea('ass', counters.ass);
+  });
   
+
+  // Submit and store form values
   $('#form').on('submit', function(e) {
     e.preventDefault();
     let form = $('#form')[0];
     let formData = new FormData(form);
     console.log('\nData to be sent: ');
-    storeEntries(MYSTORE, formData);
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+    storeEntries(MYSTORE, formData, counters);
     this.submit();
   });
+
+  $('#resetForm').on('click', {c:counters}, resetForm);
+  $('#clearLs').on('click', clearLs);
 });
 
 /*
  * Function to add a textarea for a particular category. Also adds delete button.
  */
-function insertTextarea(e, title='', time='', descr='') {
-  e.preventDefault();
-  // div
-  $('#' + e.data.par1).append('<div id="div' + e.data.par1 + e.data.par2 + '">');
-  $('#' + e.data.par1).append('</div>');
+function insertTextarea(cat, catcount) {
+//  e.preventDefault();
+  // new div
+  $('#' + cat).append('<div id="div' + cat + catcount + '">');
+  $('#' + cat).append('</div>');
 
   // title
-  $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-title">Titel: </label>');
-  $('#div' + e.data.par1 + e.data.par2).append('<input type="text" id="' + e.data.par1 + e.data.par2 + '-title" name="'+ e.data.par1 + '-title" required>');
-  $('#' + e.data.par1 + e.data.par2 + '-title').val(title);
+  inputEntry(cat, catcount, 'title', 'Titel', 'text');
 
-  // description
-  if (e.data.par1 == 'ass'){
-    $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-descr">Beskrivning: </label>');
-    $('#div' + e.data.par1 + e.data.par2).append('<textarea id="' + e.data.par1 + e.data.par2 + '-descr" name="'+ e.data.par1 + '-descr" rows="5" cols="40">');
-    $('#' + e.data.par1 + e.data.par2 + '-descr').val(descr);
+  // If assignment
+  if (cat == 'ass'){
+    inputEntry(cat, catcount, 'company', 'Företag', 'text'); // Company
+    inputEntry(cat, catcount, 'role', 'Roll', 'text'); // Role
+    inputEntry(cat, catcount, 'descr', 'Beskrivning', 'textarea'); // Description
   }
 
   // time
-  $('#div' + e.data.par1 + e.data.par2).append('<label for="' + e.data.par1 + e.data.par2 + '-time">År: </label>');
-  $('#div' + e.data.par1 + e.data.par2).append('<input type="text" id="' + e.data.par1 + e.data.par2 + '-time" name="'+ e.data.par1 + '-time" rows="1" cols="10" pattern="^\\d{4}$" placeholder="yyyy">');
-  $('#' + e.data.par1 + e.data.par2 + '-time').val(time);
+  inputEntry(cat, catcount, 'time', 'Tid', 'time')
 
-  $('#div' + e.data.par1 + e.data.par2).append('<button onclick="deleteTextarea(\'div' + e.data.par1 + e.data.par2 + '\');" id="del' + e.data.par1 + e.data.par2 + '">Ta bort</button>');
-  e.data.par2++;
+  // delete
+  $('#div' + cat + catcount).append('<button onclick="deleteTextarea(\'div' + cat + catcount + '\');" id="del' + cat + catcount + '">Ta bort</button>');
+  counters[cat]++;
 }
 
 /*
  * Function to remove the textarea incase it is unused.
  */
 function deleteTextarea(areadiv) {
-  $('#' + areadiv).remove();
+  let del = confirm('Bekräfta borttagning');
+  if (del){
+    $('#' + areadiv).remove();
+  }
 }
 
 /*
- * Function to save entries in localStorage and show user
- * what is being sent, in console
+ * Function to reset entire form
  */
-function storeEntries(ls, fd) {
-  var object = {}
-  fd.forEach((value, key) => {
-    if (!Reflect.has(object, key)) {
-      object[key] = value;
-      return;
+function resetForm(){
+  let del = confirm('Bekräfta nollställning av formulär');
+  if (del){
+    for (let i = 0; i < counters['edu']; i++) {
+      $('#divedu' + i).remove();
     }
-    if (!Array.isArray(object[key])) {
-      object[key] = [object[key]];
+    for (let i = 0; i < counters['emp']; i++) {
+      $('#divemp' + i).remove();
     }
-    object[key].push(value);
-  });
-  $.each(object, (key,val) => {
-    ls.setItem(key, JSON.stringify(val))
-  });
-  console.log(JSON.stringify(object));
+    for (let i = 0; i < counters['cou']; i++) {
+      $('#divcou' + i).remove();
+    }
+    for (let i = 0; i < counters['ass']; i++) {
+      $('#divass' + i).remove();
+    }
+    $('#form').trigger('reset');
+    counters = {
+      edu:0,
+      emp:0,
+      cou:0,
+      ass:0
+    };
+  }
+}
+
+/*
+ * Helper function to insert new HTML form elements.
+ * params:  e1, e2 = event data parameter from jQuery.
+ *          htmlPart = String, used for element id and name.
+ *          textPart = String, used for visible label text.
+ *          type = String, used to check if input element should
+ *                  be text or textarea (or 'time', that in this 
+ *                  case is the same as 'text' but with a small
+ *                  pattern checker enabled.
+ */
+function inputEntry(e1, e2, htmlPart, textPart, type) {
+  $('#div' + e1 + e2).append('<label for="' + e1 + e2 + '-' + htmlPart + '">' + textPart + ': </label>');
+  if (type == 'textarea') {
+    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40">');
+    $('#div' + e1 + e2).append('</textarea>');
+  } else if (type == 'time') {
+    $('#div' + e1 + e2).append('<input type="text" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" pattern="^\\d{4}" placeholder="Ex. yyyy">');
+  } else {
+    $('#div' + e1 + e2).append('<input type="' + type + '" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" required>');
+  }
+}
+
+
+/*
+ * Function to save entries in localStorage in a particular manner
+ * and show user what is being sent, in console
+ * params:  ls = Object, localStorage
+ *          fd = Object, FormData
+ *          counters = Object, counters with info about how many entries
+ *            there are per 'education', 'employment' etc.
+ */
+function storeEntries(ls, fd, counters) {
+  var obj = {
+    edu: [],
+    emp: [],
+    cou: [],
+    ass: []
+  }
+  arredu = {};
+  arremp = {};
+  arrcou = {};
+  arrass = {};
+  let a1 = 0, b1 = 0, c1 = 0, d1 = 0, a2 = 0, b2 = 0, c2 = 0, d2 = 0;
+  for (let pair of fd.entries()){
+    if (/^(?!\w{3}-).*/.test(pair[0])) {
+      ls.setItem(pair[0], pair[1]);
+    } else if(pair[0].includes('edu')) {
+      if (pair[0].includes('title')) {
+        arrass['title'] = pair[1];
+      } else if (pair[0].includes('time')) {
+        arrass['time'] = pair[1];
+      }
+      a1++;
+      if (a1 == 2) {
+        obj['edu'][a2] = arrass;
+        arrass = {};
+        a1 = 0;
+        a2++;
+      }
+    } else if (pair[0].includes('emp')) {
+      if (pair[0].includes('title')) {
+        arremp['title'] = pair[1];
+      } else if (pair[0].includes('time')) {
+        arremp['time'] = pair[1];
+      }
+      b1++;
+      if (b1 == 2) {
+        obj['emp'][b2] = arremp;
+        arremp= {};
+        b1= 0;
+        b2++;
+      }
+    } else if (pair[0].includes('cou')) {
+      if (pair[0].includes('title')) {
+        arrcou['title'] = pair[1];
+      } else if (pair[0].includes('time')) {
+        arrcou['time'] = pair[1];
+      }
+      c1++;
+      if (c1 == 2) {
+        obj['cou'][c2] = arrcou;
+        arrcou= {};
+        c1 = 0;
+        c2++;
+      }
+    } else if (pair[0].includes('ass')) {
+      if (pair[0].includes('title')) {
+        arrass['title'] = pair[1];
+      } else if (pair[0].includes('company')) {
+        arrass['company'] = pair[1];
+      } else if (pair[0].includes('role')) {
+        arrass['role'] = pair[1];
+      } else if (pair[0].includes('descr')) {
+        arrass['descr'] = pair[1];
+      } else if (pair[0].includes('time')) {
+        arrass['time'] = pair[1];
+      }
+      d1++;
+      if (d1 == 5) {
+        obj['ass'][d2] = arrass;
+        arrass= {};
+        d1 = 0;
+        d2++;
+      }
+    }
+  }
+  ls.setItem('mult', JSON.stringify(obj));
+  ls.setItem('counters', JSON.stringify(counters));
+  console.log(ls);
 }
 
 /*
@@ -100,57 +233,46 @@ function getEntries(ls){
     return;
   }
 
-  // Single values populate form directly.
-  // Multiple values are extracted into a more complex structure
-  var tmp_obj = {};
-  var arr = [];
-  Object.keys(ls).forEach(function(k) {
-    if (/^(?!\w{3}-).*/.test(k)) {
-      $('#' + k).val(JSON.parse(ls.getItem(k)));
-    } else {
-      arr.push(JSON.parse(ls.getItem(k)))
-      t = k.split(/-\w+$/)[0];
-      tmp_obj[t] = {...arr};
+  // Populate form with empty input/textareas, that correspond with
+  // the stored values in counters (from localStorage)
+  counters = JSON.parse(ls.getItem('counters'));
+  for (let [key,val] of Object.entries(counters)) {
+    for (let i = 0; i < val; i++) {
+      insertTextarea(key, i);
+      counters[key]--;
     }
+  }
+
+  // Add stored values from localStorage to the newly added
+  // input/textarea.
+  let tmp_obj = JSON.parse(ls.getItem('mult')); // Parse JSON string in lS
+  for (let [key,val] of Object.entries(tmp_obj)) { // iterate over object
+    for (let i = 0; i < val.length; i++) { // iterate over array containing values
+      for (let [k, v] of Object.entries(val[i])) { // Array contains objects, iterate over these
+        $('#' + key + i + '-' + k).val(v); // Insert values in correct input/textarea
+      }
+    }
+  }
+
+  // Add the unique values (such as 'name', 'role' and so on) from 
+  // localStorage.
+  Object.keys(ls).forEach(function(k) {
+    if (/^(?!\w{3}-).*/.test(k)) { // test RegEx with Object key. "if key != 'edu-'" for example.
+      $('#' + k).val(ls.getItem(k)); // Populate input/textarea with stored value
+    } 
   });
-  console.log(tmp_obj);
-
-
+  console.log('Getting from localStorage:');
+  console.log(ls);
 }
 
 
-
-//      var arr = JSON.parse(ls.getItem(k));
-//      let tmp_sub_obj = {}
-////      tmp_sub_obj[k.split(/-\w+$/)] = [arr]
-//      tmp_sub_obj[k] = [arr]
-//      tmp_arr.push(tmp_sub_obj);
-//  var tmp_obj = {
-//    'edu-title': [],
-//    'edu-time': [],
-//    'emp-title': [],
-//    'emp-time': [],
-//    'cou-title': [],
-//    'cou-time': [],
-//    'ass-title': [],
-//    'ass-time': [],
-//    'ass-decr': []
-//  };
-
-  // Transform data into a more comprehensible Object.
-
-//  var tmp_obj = {};
-//  for (let i = 0; i < tmp_arr.length; i++) {
-//    Object.keys(tmp_arr[i]).forEach(function(k) {
-//      tmp_obj[k] = tmp_arr[i][k];
-//    });
-//  }
-
-//  for (let key, val in tmp_obj) {
-//    
-//  }
-
-//  pasteStorageValues(tmp_obj);
+/*
+ * Function to clear localStorage completely.
+ */
+function clearLs() {
+  let con = confirm('Är du säker på att du vill radera allt?');
+  if (con) localStorage.clear();
+}
 
 function zip(arrays) {
   return arrays[0].map(function(_,i){

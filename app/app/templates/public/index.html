@@ -2,49 +2,92 @@
 
 {% block header %}
 <script src="{{ url_for('static', filename='js/form.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css">
 {% endblock %}
 
 {% block main %}
-<form id="form" action="/createpdf" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-  <fieldset>
-    <legend>Övergripande detaljer</legend>
-    <label for="name">Namn:</label>
-    <input type="text" id="name" name="name" required placeholder="Förnamn Efternamn">
-    <label for="role">Roll:</label>
-    <input type="text" id="role" name="role" required placeholder="Eg. Senior konsult Konstruktion">
-    <label for="unit">Enhet:</label>
-    <input type="text" id="unit" name="unit" required placeholder="Ex. Life Science">
-    <label for="unitdetail">Enhetsdetaljer:</label>
-    <input type="text" id="unitdetail" name="unitdetail" required placeholder="Ex. Process och projektledning">
-    <label for="phone">Telefon:</label>
-    <input type="tel" id="phone" name="phone" required placeholder="010-2118000">
-    <label for="email">E-post:</label>
-    <input type="email" id="email" name="email" required placeholder="arne.arnesson@bjerking.se">
-    <label for="employmentyear">Anställningsdatum</label>
-    <input type="date" id="employmentdate" name="employmentdate" required>
-  </fieldset>
-  <fieldset>
-    <legend>Kort presentation</legend>
-    <textarea id="presentation" name="presentation" placeholder="Kort om vem du är, lyft fram bedrifter eller höjdpunkter" cols="40" rows="20"></textarea>
-    <label for="portrait">Ladda upp bild (PNG): </label>
-    <input type="file" id="portrait" name="img" accept=".png">
-  </fieldset>
-  <fieldset id="edu">
-    <legend>Utbildning</legend>
-    <button id="addedu">Lägg till utbildning</button>
-  </fieldset>
-  <fieldset id="emp">
-    <legend>Anställningar</legend>
-    <button id="addemp">Lägg till anställning</button>
-  </fieldset>
-  <fieldset id="cou">
-    <legend>Kurser</legend>
-    <button id="addcou">Lägg till kurs</button>
-  </fieldset>
-  <fieldset id="ass">
-    <legend>Uppdrag</legend>
-    <button id="addass">Lägg till uppdrag</button>
-  </fieldset>
-  <input type="submit">
-</form>
+<nav class="pagenav">
+  <p></p>
+</nav>
+
+<header class="title">
+  <h1>Skapa ett Bjerking CV</h1>
+</header>
+
+<section>
+  <article>
+    <header>
+      <h2>Instruktion</h2>
+    </header>
+    <p>Fyll bara i dina uppgifter i respektive ruta. Använd knapparna under rubrikerna <i>Utbildning</i>, <i>Anställningar</i> och så vidare för att lägga till ytterligare poster i ditt CV. När du är färdig klickar du på 'Skicka', varpå formuläret skapas och visas antingen i din webbläsare, laddas ner till din nerladdningsmapp, beroende lite på hur dina inställningar ser ut.</p>
+    <p>Om du har fyllt i formuläret tidigare och inte rensat webbläsarhistoriken (se nedan '<i>Om data</i>') så ska informationen du tidigare ha angett laddas in, utom bilden.</p>
+    <p>Aktuell mall som åtföljs är den som Bjerking har tagit fram Q1 2021.</p>
+    <header>
+      <h3>Bild</h3>
+    </header>
+    <p>I dagsläget accepteras endast bildfiler i <code>.PNG</code>-format. Bilden bör vara kvadratisk, då den inbyggda formateringen kommer att forcera liksidighet. Filstorleken får inte överstiga <b>1 MB</b>.</p>
+    <header>
+      <h2>Om data</h2>
+    </header>
+    <p>All data i formuläret sparas endast i din lokala webbläsare. Det finns således ingen databas på servern som gör detta åt dig. Inga skapade dokument (loggar, <code>.pdf</code> o dylikt) eller bildfiler sparas utan raderas direkt efter att PDF:en har levererats av webbläsaren.</p>
+    <p>Om du har automatisk borttagning av <i>cookies</i> och historik finns risk att formulärdatan försvinner. Bildfilen kommer att behöva laddas upp vid varje ny framtagning av PDF.</p>
+    <p>Om du inte har automatisk borttagning, men ändå vill rensa formulärdatan går det att göra med en knapptryckning nedan, under formuläret.</p>
+  </article>
+
+  <article>
+    <header>
+      <h2>Formulär</h2>
+    </header>
+    <form id="form" action="/createpdf" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+      <fieldset>
+        <legend>Övergripande detaljer</legend>
+        <label for="name">Namn:</label>
+        <input type="text" id="name" name="name" required placeholder="Förnamn Efternamn">
+        <label for="role">Roll:</label>
+        <input type="text" id="role" name="role" required placeholder="Eg. Senior konsult Konstruktion">
+        <label for="unit">Enhet:</label>
+        <input type="text" id="unit" name="unit" required placeholder="Ex. Life Science">
+        <label for="unitdetail">Enhetsdetaljer:</label>
+        <input type="text" id="unitdetail" name="unitdetail" required placeholder="Ex. Process och projektledning">
+        <label for="phone">Telefon:</label>
+        <input type="tel" id="phone" name="phone" required placeholder="010-2118000">
+        <label for="email">E-post:</label>
+        <input type="email" id="email" name="email" required placeholder="arne.arnesson@bjerking.se">
+        <label for="employmentyear">Anställningsdatum</label>
+        <input type="date" id="employmentdate" name="employmentdate" required>
+      </fieldset>
+      <fieldset>
+        <legend>Kort presentation</legend>
+        <textarea id="presentation" name="presentation" placeholder="Kort om vem du är, lyft fram bedrifter eller höjdpunkter" cols="40" rows="20"></textarea>
+        <label for="portrait">Ladda upp bild (PNG): </label>
+        <input type="file" id="portrait" name="img" accept=".png">
+      </fieldset>
+      <fieldset id="edu">
+        <legend>Utbildning</legend>
+        <button id="addedu" class="addbutton">Lägg till utbildning</button>
+      </fieldset>
+      <fieldset id="emp">
+        <legend>Anställningar</legend>
+        <button id="addemp" class="addbutton">Lägg till anställning</button>
+      </fieldset>
+      <fieldset id="cou">
+        <legend>Kurser</legend>
+        <button id="addcou" class="addbutton">Lägg till kurs</button>
+      </fieldset>
+      <fieldset id="ass">
+        <legend>Uppdrag</legend>
+        <button id="addass" class="addbutton">Lägg till uppdrag</button>
+      </fieldset>
+      <input type="submit">
+    </form>
+    <div class="buttons">
+      <button id="resetForm">Nollställ formulär</button> 
+      <button id="clearLs">Ta bort sparad formulärdata från din Webbläsare</button>
+    </div>
+  </article>
+</section>
+
+<footer>
+  <p>App framtagen av Philip Tunbjer, 2021-03</p>
+</footer>
 {% endblock %}

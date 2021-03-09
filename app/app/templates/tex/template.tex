@@ -71,7 +71,8 @@
     \endlastfoot
 
     ((* for row in msg['ass'] *))
-    (((row['title']|escape_tex))) & (((row['descr']|escape_tex))) & (((row['time']|escape_tex))) \\ \midrule
+
+    \textbf{(((row['title']|escape_tex)))}((* if row['company'] != '' *))\newline (((row['company']|escape_tex)))((* endif *))((* if row['role'] != '' *))\newline \textit{(((row['role']|escape_tex)))}((* endif *)) & (((row['descr']|escape_tex))) & (((row['time']|escape_tex))) \\ ((("\midrule" if not loop.last)))
 
     ((* endfor *))
 \end{longtable}

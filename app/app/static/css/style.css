@@ -1,3 +1,49 @@
 body {
+  font-family: "Computer Modern", Arial, sans-serif;
   background-color: #CCC;
+  line-height: 1.6;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 20px auto auto;
+  grid-template-areas:
+    " pagenav title aside "
+    " pagenav main aside "
+    " footer footer footer";
+  grid-gap: 20px;
+}
+
+main {
+  grid-area: main;
+}
+
+.title {
+  grid-area: title;
+  margin: auto;
+  width: 50%;
+}
+
+section {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 20px 100px 20px 100px;
+}
+
+footer {
+  grid-area: footer;
+}
+
+fieldset, fieldset > div {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+fieldset > div {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+fieldset {
+  margin-top: 20px;
 }

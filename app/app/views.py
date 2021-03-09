@@ -88,7 +88,7 @@ def createpdf():
         if 'cou-title' in data:
             msg['cou'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('cou-title'), request.form.getlist('cou-time'))]
         if 'ass-title' in data:
-            msg['ass'] = [{'title': i, 'descr': j, 'time': k} for i,j,k in zip(request.form.getlist('ass-title'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
+            msg['ass'] = [{'title': i, 'company': j, 'role': k, 'descr': l, 'time': m} for i,j,k,l,m in zip(request.form.getlist('ass-title'), request.form.getlist('ass-company'), request.form.getlist('ass-role'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
 
         cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
         pdf = writeTex(cv, app.config["OUT_DIR"], filename)

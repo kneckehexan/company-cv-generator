@@ -10,7 +10,7 @@ class Config(object):
     IMAGE_UPLOADS = "app/app/uploads"
     OUT_DIR = "/app/app/static/pdf"
 
-    ALLOWED_EXTENSIONS = ["JPEG", "jpeg", "JPG", "jpg", "PNG", "png"]
+    ALLOWED_EXTENSIONS = ["PNG", "png"]
     MAX_CONTENT_LENGTH = 1024 * 1024
 
     SESSION_COOKIE_SECURE = True
