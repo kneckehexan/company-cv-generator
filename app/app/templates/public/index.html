@@ -10,7 +10,7 @@
   <p></p>
 </nav>
 
-<header class="title">
+<header class="title center-text">
   <h1>Skapa ett Bjerking CV</h1>
 </header>
 
@@ -22,7 +22,7 @@
     <p>Fyll bara i dina uppgifter i respektive ruta. Använd knapparna under rubrikerna <i>Utbildning</i>, <i>Anställningar</i> och så vidare för att lägga till ytterligare poster i ditt CV. När du är färdig klickar du på 'Skicka', varpå formuläret skapas och visas antingen i din webbläsare, laddas ner till din nerladdningsmapp, beroende lite på hur dina inställningar ser ut.</p>
     <p>Om du har fyllt i formuläret tidigare och inte rensat webbläsarhistoriken (se nedan '<i>Om data</i>') så ska informationen du tidigare ha angett laddas in, utom bilden.</p>
     <p>Aktuell mall som åtföljs är den som Bjerking har tagit fram Q1 2021.</p>
-    <p><i>Anställningar</i>, <i>Utbildningar</i>, <i>Kurser</i> och <i>Referensuppdrag</i> sorteras utan undantag först efter <i>Tid</i> och därefter <i>Titel</i>. Det spelar alltså ingen roll hur du skriver in uppgifterna.
+    <p><i>Anställningar</i>, <i>Utbildningar</i>, <i>Kurser</i> och <i>Referensuppdrag</i> sorteras utan undantag först efter <i>Tid</i> och därefter <i>Titel</i>. Det spelar alltså ingen roll i vilken ordning du skriver in uppgifterna.
     <header>
       <h3>Begränsningar</h3>
     </header>
@@ -73,30 +73,38 @@
       </fieldset>
       <fieldset id="edu">
         <legend>Utbildning</legend>
-        <button id="addedu" class="addbutton">Lägg till utbildning</button>
+        <button id="addedu" class="add-item button-hover">Lägg till utbildning</button>
+        <div id="edudiv">
+        </div>
       </fieldset>
       <fieldset id="emp">
         <legend>Anställningar</legend>
-        <button id="addemp" class="addbutton">Lägg till anställning</button>
+        <button id="addemp" class="add-item button-hover">Lägg till anställning</button>
+        <div id="empdiv">
+        </div>
       </fieldset>
       <fieldset id="cou">
         <legend>Kurser</legend>
-        <button id="addcou" class="addbutton">Lägg till kurs</button>
+        <button id="addcou" class="add-item button-hover">Lägg till kurs</button>
+        <div id="coudiv">
+        </div>
       </fieldset>
       <fieldset id="ass">
         <legend>Uppdrag</legend>
-        <button id="addass" class="addbutton">Lägg till uppdrag</button>
+        <button id="addass" class="add-item button-hover">Lägg till uppdrag</button>
+        <div id="assdiv">
+        </div>
       </fieldset>
       <input type="submit">
     </form>
     <div class="buttons">
-      <button id="resetForm">Nollställ formulär</button> 
-      <button id="clearLs">Ta bort sparad formulärdata från din Webbläsare</button>
+      <button id="reset-form" class="button-hover">Nollställ formulär</button> 
+      <button id="clear-localstorage" class="delete-item button-hover">Ta bort sparad formulärdata från din Webbläsare</button>
     </div>
   </article>
 </section>
+{% endblock %}
 
-<footer>
-  <p>App framtagen av Philip Tunbjer, 2021-03</p>
-</footer>
+{% block foot %}
+  <p class="text-center">Framtagen av Philip Tunbjer, Life Science @ Bjerking, 2021-03</p>
 {% endblock %}

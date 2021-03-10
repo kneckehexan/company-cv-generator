@@ -10,42 +10,47 @@ var counters = {
 $(document).ready(function() {
   console.log('Document ready');
 
+  // Flash messages
+  $('.fadeflash').delay(3000).slideUp(1000);
+
   // localStorage to save user entries.
   const MYSTORE = window.localStorage;
 
+  // Get any stored values from localStorage and populate the form.
   getEntries(MYSTORE);
 
-
   // Add textarea
-  $('#addedu').on('click', function() {
-    insertTextarea('edu', counters.edu);
+  $('#addedu').on('click', function(e) {
+    e.preventDefault();
+    insertTextarea('edudiv', counters.edu);
   });
-  $('#addemp').on('click', function() {
-    insertTextarea('emp', counters.emp);
+  $('#addemp').on('click', function(e) {
+    e.preventDefault();
+    insertTextarea('empdiv', counters.emp);
   });
-  $('#addcou').on('click', function() {
-    insertTextarea('cou', counters.cou);
+  $('#addcou').on('click', function(e) {
+    e.preventDefault();
+    insertTextarea('coudiv', counters.cou);
   });
-  $('#addass').on('click', function() {
-    insertTextarea('ass', counters.ass);
+  $('#addass').on('click', function(e) {
+    e.preventDefault();
+    insertTextarea('assdiv', counters.ass);
   });
   
-
-  // Submit and store form values
+  // Submit and store form values.
   $('#form').on('submit', function(e) {
     e.preventDefault();
     let form = $('#form')[0];
     let formData = new FormData(form);
-    console.log('\nData to be sent: ');
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
     storeEntries(MYSTORE, formData, counters);
     this.submit();
   });
 
-  $('#resetForm').on('click', {c:counters}, resetForm);
-  $('#clearLs').on('click', clearLs);
+  // Reset form and counters.
+  $('#reset-form').on('click', {c:counters}, resetForm);
+
+  // Delete localStorage.
+  $('#clear-localstorage').on('click', clearLs);
 });
 
 /*
@@ -54,24 +59,23 @@ $(document).ready(function() {
 function insertTextarea(cat, catcount) {
 //  e.preventDefault();
   // new div
-  $('#' + cat).append('<div id="div' + cat + catcount + '">');
-  $('#' + cat).append('</div>');
+  $('#' + cat).prepend('<div id="div' + cat + catcount + '" class="added-item"></div>');
 
   // title
-  inputEntry(cat, catcount, 'title', 'Titel', 'text');
+  inputEntry(cat, catcount, 'title', 'Titel', 'text', 'Namn på ');
 
   // If assignment
-  if (cat == 'ass'){
-    inputEntry(cat, catcount, 'company', 'Företag', 'text'); // Company
-    inputEntry(cat, catcount, 'role', 'Roll', 'text'); // Role
-    inputEntry(cat, catcount, 'descr', 'Beskrivning', 'textarea'); // Description
+  if (cat == 'assdiv'){
+    inputEntry(cat, catcount, 'company', 'Företag', 'text', 'Företag AB'); // Company
+    inputEntry(cat, catcount, 'role', 'Roll', 'text', 'Projektör, Projektledare'); // Role
+    inputEntry(cat, catcount, 'descr', 'Beskrivning', 'textarea', 'Beskrivning av uppdraget. Tänk på att inte skriva en uppsats'); // Description
   }
 
   // time
   inputEntry(cat, catcount, 'time', 'Tid', 'time')
 
-  // delete
-  $('#div' + cat + catcount).append('<button onclick="deleteTextarea(\'div' + cat + catcount + '\');" id="del' + cat + catcount + '">Ta bort</button>');
+  // delete-button
+  $('#div' + cat + catcount).append('<button onclick="deleteTextarea(\'div' + cat + catcount + '\');" id="del' + cat + catcount + '" class="delete-item">Ta bort post</button>');
   counters[cat]++;
 }
 
@@ -123,15 +127,15 @@ function resetForm(){
  *                  case is the same as 'text' but with a small
  *                  pattern checker enabled.
  */
-function inputEntry(e1, e2, htmlPart, textPart, type) {
+function inputEntry(e1, e2, htmlPart, textPart, type, placeholder='') {
   $('#div' + e1 + e2).append('<label for="' + e1 + e2 + '-' + htmlPart + '">' + textPart + ': </label>');
   if (type == 'textarea') {
-    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40" maxlength="3300">');
+    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40" maxlength="3300" placeholder="' + placeholder + '">');
     $('#div' + e1 + e2).append('</textarea>');
   } else if (type == 'time') {
-    $('#div' + e1 + e2).append('<input type="text" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" pattern="^\\d{4}" placeholder="Ex. yyyy">');
+    $('#div' + e1 + e2).append('<input type="text" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" pattern="^\\d{4}.*" placeholder="Ex. yyyy">');
   } else {
-    $('#div' + e1 + e2).append('<input type="' + type + '" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" required>');
+    $('#div' + e1 + e2).append('<input type="' + type + '" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" required placeholder="' + placeholder + '">');
   }
 }
 
@@ -219,14 +223,13 @@ function storeEntries(ls, fd, counters) {
       }
     }
   }
-
   // Sort the individual arrays inside the object by descending years.
   for (let [_,val] of Object.entries(obj)) {
     val.sort((a, b) => (a.time > b.time) ? -1 : (a.time === b.time) ? ((a.title > b.title) ? 1 : -1) : 1);
   }
-  console.log(obj);
   ls.setItem('mult', JSON.stringify(obj));
   ls.setItem('counters', JSON.stringify(counters));
+  console.log('Data to be sent: ');
   console.log(ls);
 }
 

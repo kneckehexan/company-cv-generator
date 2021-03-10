@@ -70,6 +70,7 @@ def createpdf():
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
         filename = 'default.png'
+        message = Markup("<b>Fel eller ingen bildfil vald, använder default.</b>")
         if 'img' in request.files:
             file = request.files['img']
             if file and allowed_file(file.filename):
@@ -77,9 +78,9 @@ def createpdf():
                 portraitFilePath = os.path.join(app.config['IMAGE_UPLOADS'], filename)
                 file.save(portraitFilePath)
             else:
-                flash('Ingen bildfil vald, använder "default"')
+                flash(message, "alert-warning")
         else:
-            flash('Ingen bildfil vald, använder "default"')
+            flash(message, "alert-warning")
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -119,12 +120,16 @@ def getpdf(pdfname):
 #    filepath = os.path.join(app.instance_path, filename)
 #    return r
 #    return send_from_directory(app.config['OUT_DIR'], filename=filename, as_attachment=True)
+#@app.after_request
+#def after_request(response):
+#    render_template("public/index.html")
+#    return response
 
 
-@app.after_request
-def after_request(response):
-    """ Ensure responses aren't cached """
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
+#@app.after_request
+#def after_request(response):
+#    """ Ensure responses aren't cached """
+#    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+#    response.headers["Expires"] = 0
+#    response.headers["Pragma"] = "no-cache"
+#    return response
