@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, flash, url_for, Markup, g,
 from app.helpers import allowed_file, writeTex, deleteImgUpload, deletePdf
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from operator import itemgetter
 
 import os, re, jinja2, sys
 
@@ -83,12 +84,20 @@ def createpdf():
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
             msg['edu'] =  [{'title': i, 'time': j} for i, j in zip(request.form.getlist('edu-title'), request.form.getlist('edu-time'))]
+            msg['edu'].sort(key = itemgetter('title'))
+            msg['edu'].sort(key = itemgetter('time'), reverse=True)
         if 'emp-title' in data:
             msg['emp'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('emp-title'), request.form.getlist('emp-time'))]
+            msg['emp'].sort(key = itemgetter('title'))
+            msg['emp'].sort(key = itemgetter('time'), reverse=True)
         if 'cou-title' in data:
             msg['cou'] = [{'title': i, 'time': j} for i, j in zip(request.form.getlist('cou-title'), request.form.getlist('cou-time'))]
+            msg['cou'].sort(key = itemgetter('title'))
+            msg['cou'].sort(key = itemgetter('time'), reverse=True)
         if 'ass-title' in data:
             msg['ass'] = [{'title': i, 'company': j, 'role': k, 'descr': l, 'time': m} for i,j,k,l,m in zip(request.form.getlist('ass-title'), request.form.getlist('ass-company'), request.form.getlist('ass-role'), request.form.getlist('ass-descr'), request.form.getlist('ass-time'))]
+            msg['ass'].sort(key = itemgetter('title'))
+            msg['ass'].sort(key = itemgetter('time'), reverse=True)
 
         cv = TEXTEMPLATE.render(msg = msg, portrait = 'img/' + filename)
         pdf = writeTex(cv, app.config["OUT_DIR"], filename)

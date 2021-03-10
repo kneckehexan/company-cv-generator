@@ -126,7 +126,7 @@ function resetForm(){
 function inputEntry(e1, e2, htmlPart, textPart, type) {
   $('#div' + e1 + e2).append('<label for="' + e1 + e2 + '-' + htmlPart + '">' + textPart + ': </label>');
   if (type == 'textarea') {
-    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40">');
+    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40" maxlength="3300">');
     $('#div' + e1 + e2).append('</textarea>');
   } else if (type == 'time') {
     $('#div' + e1 + e2).append('<input type="text" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" pattern="^\\d{4}" placeholder="Ex. yyyy">');
@@ -219,6 +219,12 @@ function storeEntries(ls, fd, counters) {
       }
     }
   }
+
+  // Sort the individual arrays inside the object by descending years.
+  for (let [_,val] of Object.entries(obj)) {
+    val.sort((a, b) => (a.time > b.time) ? -1 : (a.time === b.time) ? ((a.title > b.title) ? 1 : -1) : 1);
+  }
+  console.log(obj);
   ls.setItem('mult', JSON.stringify(obj));
   ls.setItem('counters', JSON.stringify(counters));
   console.log(ls);

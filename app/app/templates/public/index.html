@@ -22,6 +22,12 @@
     <p>Fyll bara i dina uppgifter i respektive ruta. Använd knapparna under rubrikerna <i>Utbildning</i>, <i>Anställningar</i> och så vidare för att lägga till ytterligare poster i ditt CV. När du är färdig klickar du på 'Skicka', varpå formuläret skapas och visas antingen i din webbläsare, laddas ner till din nerladdningsmapp, beroende lite på hur dina inställningar ser ut.</p>
     <p>Om du har fyllt i formuläret tidigare och inte rensat webbläsarhistoriken (se nedan '<i>Om data</i>') så ska informationen du tidigare ha angett laddas in, utom bilden.</p>
     <p>Aktuell mall som åtföljs är den som Bjerking har tagit fram Q1 2021.</p>
+    <p><i>Anställningar</i>, <i>Utbildningar</i>, <i>Kurser</i> och <i>Referensuppdrag</i> sorteras utan undantag först efter <i>Tid</i> och därefter <i>Titel</i>. Det spelar alltså ingen roll hur du skriver in uppgifterna.
+    <header>
+      <h3>Begränsningar</h3>
+    </header>
+    <p>Max antal tecken för presentationen är 550. Beroende på hur mycket som inkluderas i <i>Tidigare Anställningar</i>, <i>Utbildning</i> och <i>Kurser</i> så kan även detta bli för mycket.</p>
+    <p>Max antal tecken är ungefär 3300, vilket beskrivningsrutan <i>Referensuppdrag</i> är begränsad till. Har man för många rader kan denna text också göra att resulterande PDF ser dålig ut. Se till att begränsa innehållet till ungefär 44 rader. Du hindras däremot inte att överskrida detta. OBS! Första beskrivningen för <i>Referensuppdrag</i> bör inte överskrida 1700 tecken eller (helst) 26 rader. Dock är detta väldigt godtyckliga siffror eftersom det beror på hur mycket som inkluderas i alla andra kategorier samt presentation.</p>
     <header>
       <h3>Bild</h3>
     </header>
@@ -32,6 +38,9 @@
     <p>All data i formuläret sparas endast i din lokala webbläsare. Det finns således ingen databas på servern som gör detta åt dig. Inga skapade dokument (loggar, <code>.pdf</code> o dylikt) eller bildfiler sparas utan raderas direkt efter att PDF:en har levererats av webbläsaren.</p>
     <p>Om du har automatisk borttagning av <i>cookies</i> och historik finns risk att formulärdatan försvinner. Bildfilen kommer att behöva laddas upp vid varje ny framtagning av PDF.</p>
     <p>Om du inte har automatisk borttagning, men ändå vill rensa formulärdatan går det att göra med en knapptryckning nedan, under formuläret.</p>
+    <ul>
+      <li>Nollställ formulär = Raderar synlig text. Gammal formulärdata finns kvar till dess att formuläret skickas på nytt. Gammal formulärdata som <i>inte</i> ersätts kommer att finnas kvar.</li>
+      <li>Ta bort sparad information... = Raderar all sparad text från webbläsarens minne som är kopplat till denna sida. Inskriven text kommer fortfarande att synas till dess att sidan laddas om.
   </article>
 
   <article>
@@ -58,7 +67,7 @@
       </fieldset>
       <fieldset>
         <legend>Kort presentation</legend>
-        <textarea id="presentation" name="presentation" placeholder="Kort om vem du är, lyft fram bedrifter eller höjdpunkter" cols="40" rows="20"></textarea>
+        <textarea id="presentation" name="presentation" placeholder="Kort om vem du är, lyft fram bedrifter eller höjdpunkter" cols="40" rows="20" maxlength="550"></textarea>
         <label for="portrait">Ladda upp bild (PNG): </label>
         <input type="file" id="portrait" name="img" accept=".png">
       </fieldset>
