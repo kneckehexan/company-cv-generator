@@ -22,19 +22,23 @@ $(document).ready(function() {
   // Add textarea
   $('#addedu').on('click', function(e) {
     e.preventDefault();
-    insertTextarea('edudiv', counters.edu);
+    insertTextarea('edu', counters.edu, 'edudiv');
+    $('.added-item').slideDown('1000');
   });
   $('#addemp').on('click', function(e) {
     e.preventDefault();
-    insertTextarea('empdiv', counters.emp);
+    insertTextarea('emp', counters.emp, 'empdiv');
+    $('.added-item').slideDown('1000');
   });
   $('#addcou').on('click', function(e) {
     e.preventDefault();
-    insertTextarea('coudiv', counters.cou);
+    insertTextarea('cou', counters.cou, 'coudiv');
+    $('.added-item').slideDown('1000');
   });
   $('#addass').on('click', function(e) {
     e.preventDefault();
-    insertTextarea('assdiv', counters.ass);
+    insertTextarea('ass', counters.ass, 'assdiv');
+    $('.added-item').slideDown('1000');
   });
   
   // Submit and store form values.
@@ -56,16 +60,16 @@ $(document).ready(function() {
 /*
  * Function to add a textarea for a particular category. Also adds delete button.
  */
-function insertTextarea(cat, catcount) {
+function insertTextarea(cat, catcount, loc) {
 //  e.preventDefault();
   // new div
-  $('#' + cat).prepend('<div id="div' + cat + catcount + '" class="added-item"></div>');
+  $('#' + loc).prepend('<div id="div' + cat + catcount + '" class="added-item"></div>');
 
   // title
   inputEntry(cat, catcount, 'title', 'Titel', 'text', 'Namn på ');
 
   // If assignment
-  if (cat == 'assdiv'){
+  if (cat == 'ass'){
     inputEntry(cat, catcount, 'company', 'Företag', 'text', 'Företag AB'); // Company
     inputEntry(cat, catcount, 'role', 'Roll', 'text', 'Projektör, Projektledare'); // Role
     inputEntry(cat, catcount, 'descr', 'Beskrivning', 'textarea', 'Beskrivning av uppdraget. Tänk på att inte skriva en uppsats'); // Description
@@ -75,18 +79,18 @@ function insertTextarea(cat, catcount) {
   inputEntry(cat, catcount, 'time', 'Tid', 'time')
 
   // delete-button
-  $('#div' + cat + catcount).append('<button onclick="deleteTextarea(\'div' + cat + catcount + '\');" id="del' + cat + catcount + '" class="delete-item">Ta bort post</button>');
+  $('#div' + cat + catcount).append('<button onclick="deleteTextarea(\'div' + cat + catcount + '\');" id="del' + cat + catcount + '" class="delete-item delete-post button-hover">Ta bort post</button>');
   counters[cat]++;
+  console.log(counters[cat]);
 }
 
 /*
  * Function to remove the textarea incase it is unused.
  */
 function deleteTextarea(areadiv) {
-  let del = confirm('Bekräfta borttagning');
-  if (del){
-    $('#' + areadiv).remove();
-  }
+  $('#' + areadiv).remove();
+  let cat = areadiv.slice(3,6);
+  counters[cat]--;
 }
 
 /*
@@ -119,7 +123,9 @@ function resetForm(){
 
 /*
  * Helper function to insert new HTML form elements.
- * params:  e1, e2 = event data parameter from jQuery.
+ * params:  loc = the location. Unused.
+ *          cat = String, category (edu, emp, cour or ass)
+ *          catcount = Integer, the category counter.
  *          htmlPart = String, used for element id and name.
  *          textPart = String, used for visible label text.
  *          type = String, used to check if input element should
@@ -127,15 +133,14 @@ function resetForm(){
  *                  case is the same as 'text' but with a small
  *                  pattern checker enabled.
  */
-function inputEntry(e1, e2, htmlPart, textPart, type, placeholder='') {
-  $('#div' + e1 + e2).append('<label for="' + e1 + e2 + '-' + htmlPart + '">' + textPart + ': </label>');
+function inputEntry(cat, catcount, htmlPart, textPart, type, placeholder='') {
+  $('#div' + cat + catcount).append('<label for="' + cat + catcount + '-' + htmlPart + '">' + textPart + ': </label>');
   if (type == 'textarea') {
-    $('#div' + e1 + e2).append('<textarea id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" rows="5" cols="40" maxlength="3300" placeholder="' + placeholder + '">');
-    $('#div' + e1 + e2).append('</textarea>');
+    $('#div' + cat + catcount).append('<textarea id="' + cat + catcount + '-' + htmlPart + '" name="'+ cat + '-' + htmlPart + '" rows="5" cols="40" maxlength="3300" placeholder="' + placeholder + '" ></textarea>');
   } else if (type == 'time') {
-    $('#div' + e1 + e2).append('<input type="text" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" pattern="^\\d{4}.*" placeholder="Ex. yyyy">');
+    $('#div' + cat + catcount).append('<input type="text" id="' + cat + catcount + '-' + htmlPart + '" name="'+ cat + '-' + htmlPart + '" pattern="^\\d{4}.*" placeholder="Ex. yyyy" >');
   } else {
-    $('#div' + e1 + e2).append('<input type="' + type + '" id="' + e1 + e2 + '-' + htmlPart + '" name="'+ e1 + '-' + htmlPart + '" required placeholder="' + placeholder + '">');
+    $('#div' + cat + catcount).append('<input type="' + type + '" id="' + cat + catcount + '-' + htmlPart + '" name="'+ cat + '-' + htmlPart + '" required placeholder="' + placeholder + '">');
   }
 }
 
@@ -246,8 +251,8 @@ function getEntries(ls){
   // the stored values in counters (from localStorage)
   counters = JSON.parse(ls.getItem('counters'));
   for (let [key,val] of Object.entries(counters)) {
-    for (let i = 0; i < val; i++) {
-      insertTextarea(key, i);
+    for (let i = val-1; i >= 0; i--){
+      insertTextarea(key, i, key + 'div');
       counters[key]--;
     }
   }
@@ -256,7 +261,7 @@ function getEntries(ls){
   // input/textarea.
   let tmp_obj = JSON.parse(ls.getItem('mult')); // Parse JSON string in lS
   for (let [key,val] of Object.entries(tmp_obj)) { // iterate over object
-    for (let i = 0; i < val.length; i++) { // iterate over array containing values
+    for (let i = val.length-1; i >= 0; i--) { // iterate over array containing values
       for (let [k, v] of Object.entries(val[i])) { // Array contains objects, iterate over these
         $('#' + key + i + '-' + k).val(v); // Insert values in correct input/textarea
       }
