@@ -3,3 +3,4 @@ flask_session
 requests
 flask-mysql
 jinja2
+uwsgi

@@ -17,7 +17,6 @@ RUN mkdir app/
 COPY dockerreq/requirements.txt /app/requirements.txt
 WORKDIR ./app
 RUN pip install -r requirements.txt
-RUN apk --update add ghostscript
 WORKDIR ../
 COPY . ./app
 ENV FLASK_APP=run.py

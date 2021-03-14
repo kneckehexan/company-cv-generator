@@ -54,7 +54,7 @@ TEXTEMPLATE = LATEX_JINJA_ENV.get_template('template.tex')
 
 @app.route("/createpdf", methods=["POST"])
 def createpdf():
-    """ Add assignment to DB """
+    """ Get form data and render pdf """
     with app.app_context():
         # Get form data
         if request.form:
@@ -70,17 +70,12 @@ def createpdf():
         msg['email'] = data['email']
         msg['employmentdate'] = data['employmentdate']
         filename = 'default.png'
-        message = Markup("<b>Fel eller ingen bildfil vald, använder default.</b>")
         if 'img' in request.files:
             file = request.files['img']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename).replace("_","")
                 portraitFilePath = os.path.join(app.config['IMAGE_UPLOADS'], filename)
                 file.save(portraitFilePath)
-            else:
-                flash(message, "alert-warning")
-        else:
-            flash(message, "alert-warning")
         if 'presentation' in data:
             msg['presentation'] = data['presentation']
         if 'edu-title' in data:
@@ -112,6 +107,8 @@ def getpdf(pdfname):
     with open(os.path.join(app.config['OUT_DIR'], filename), 'rb') as f:
         data = f.readlines()
     os.remove(os.path.join(app.config['OUT_DIR'], filename))
+    message = Markup('<b>Fil hämtad och raderad från server</b>')
+    flash(message, 'success')
     return Response(data, headers={
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename=%s;' %filename

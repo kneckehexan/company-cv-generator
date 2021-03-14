@@ -154,9 +154,10 @@ textarea {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
-  width: 50%;
+  width: 20%;
   margin: auto;
 }
+
 
 .added-item {
   display: none;
