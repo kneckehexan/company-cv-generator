@@ -107,8 +107,6 @@ def getpdf(pdfname):
     with open(os.path.join(app.config['OUT_DIR'], filename), 'rb') as f:
         data = f.readlines()
     os.remove(os.path.join(app.config['OUT_DIR'], filename))
-    message = Markup('<b>Fil hämtad och raderad från server</b>')
-    flash(message, 'success')
     return Response(data, headers={
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename=%s;' %filename
