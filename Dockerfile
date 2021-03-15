@@ -22,4 +22,4 @@ COPY . ./app
 ENV FLASK_APP=run.py
 #ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 5000
-CMD ["python", "app/run.py"]
+CMD ["uwsgi", "app/app.ini"]
