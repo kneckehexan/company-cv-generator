@@ -1,11 +1,20 @@
 version: "3.8"
+
 services:
-    web:
-        build: ./
-        ports:
-            - '5000:5000'
-        volumes:
-            - ./app:/app
-        environment:
-            FLASK_ENV: development
-        container_name: bjeCV
+
+    flask:
+      build: ./flask
+      container_name: flask
+      volumes:
+        - ./flask:/app
+      environment:
+        FLASK_ENV: development
+      expose:
+        - 8080
+
+    nginx:
+      build: ./nginx
+      container_name: nginx
+      restart: always
+      ports:
+        - "80:80"

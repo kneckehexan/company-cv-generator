@@ -1,6 +1,5 @@
 Flask==1.1
 flask_session
 requests
-flask-mysql
 jinja2
-uwsgi
+uwsgi~=2.0

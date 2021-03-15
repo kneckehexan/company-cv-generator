@@ -7,8 +7,8 @@ class Config(object):
     DB_USERNAME = "admin"
     DB_PASSWORD = "example"
 
-    IMAGE_UPLOADS = "app/app/uploads"
-    OUT_DIR = "/app/app/static/pdf"
+    IMAGE_UPLOADS = "app/uploads"
+    OUT_DIR = "app/static/pdf"
 
     ALLOWED_EXTENSIONS = ["PNG", "png"]
     MAX_CONTENT_LENGTH = 1024 * 1024

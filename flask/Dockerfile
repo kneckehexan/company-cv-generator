@@ -14,12 +14,12 @@ RUN tlmgr install $(cat /tmp/packages.txt)
 
 # Set up Flask
 RUN mkdir app/
-COPY dockerreq/requirements.txt /app/requirements.txt
-WORKDIR ./app
+RUN apk add python3-dev build-base linux-headers pcre-dev
+COPY dockerreq/requirements.txt app/
+WORKDIR /app
 RUN pip install -r requirements.txt
-WORKDIR ../
 COPY . ./app
 ENV FLASK_APP=run.py
 #ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 5000
-CMD ["uwsgi", "app/app.ini"]
+CMD ["uwsgi", "app.ini"]

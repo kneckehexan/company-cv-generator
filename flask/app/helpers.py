@@ -14,7 +14,7 @@ def writeTex(rendered_tex, out_dir, img):
     """ Render .tex and compile with latexmk """
     with tempfile.TemporaryDirectory() as td:
         # Copy tex template files and folders to tempdir.
-        copy_tree('app/app/templates/tex', td)
+        copy_tree('app/templates/tex', td)
         shutil.copy(os.path.join(app.config['IMAGE_UPLOADS'], img), td + '/img/' + img)
         # Create random UUID4 for tex and pdf files to use.
         rndID = str(uuid4())
