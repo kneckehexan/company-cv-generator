@@ -111,20 +111,3 @@ def getpdf(pdfname):
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename=%s;' %filename
         })
-#    flash('PDF skapad och hämtad.')
-#    filepath = os.path.join(app.instance_path, filename)
-#    return r
-#    return send_from_directory(app.config['OUT_DIR'], filename=filename, as_attachment=True)
-#@app.after_request
-#def after_request(response):
-#    render_template("public/index.html")
-#    return response
-
-
-#@app.after_request
-#def after_request(response):
-#    """ Ensure responses aren't cached """
-#    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#    response.headers["Expires"] = 0
-#    response.headers["Pragma"] = "no-cache"
-#    return response
